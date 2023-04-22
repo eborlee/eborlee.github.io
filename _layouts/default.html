@@ -2,6 +2,9 @@
 <html lang="en">
 
 {% include head.html %}
+{% if page.analytics %}
+{% include google-analytics.html %}
+{% endif %}
 
 <!-- hack iOS CSS :active style -->
 <body ontouchstart="">
