@@ -103,3 +103,9 @@ friends:
 
 
 google_analytics: "G-QSX9RGXGEW"
+
+jekyll-analytics:
+  provider: "google-gtag"
+  options:
+    measurement_id: "G-QSX9RGXGEW" # 替换为您的Google Analytics跟踪ID
+
