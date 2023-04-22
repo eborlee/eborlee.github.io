@@ -10,26 +10,26 @@
   }
 }
 .sidebar-container {
-  color: #bfbfbf;
+  color: #5d5c5c;
   font-size: 14px;
 }
 .sidebar-container h5 {
-  color: #a3a3a3;
+  color: #5d5c5c;
   padding-bottom: 1em;
 }
 .sidebar-container h5 a {
-  color: #a3a3a3 !important;
+  color: #5d5c5c !important;
   text-decoration: none;
 }
 .sidebar-container a {
-  color: #bfbfbf !important;
+  color: #8a0000 !important;
 }
 .sidebar-container a:hover,
 .sidebar-container a:active {
   color: #0085a1 !important;
 }
 .sidebar-container .tags a {
-  border-color: #bfbfbf;
+  border-color: #696969;
 }
 .sidebar-container .tags a:hover,
 .sidebar-container .tags a:active {
