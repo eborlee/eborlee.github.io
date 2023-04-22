@@ -103,6 +103,8 @@ friends:
 
 
 google_analytics: "G-QSX9RGXGEW"
+# Google Analytics
+analytics: true
 
 jekyll-analytics:
   provider: "google-gtag"
