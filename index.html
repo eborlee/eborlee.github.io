@@ -3,7 +3,17 @@ layout: page
 description: "「 To Infinity and Beyond! 」<br>
                     <br> New York"
 ---
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv" class="post-title">Welcome! You are the <span id="busuanzi_value_site_pv"></span>th visitor to my blog.</span>
 
+{% if site.google_analytics %}
+{% assign total_visits = 0 %}
+{% for date in (site.time | date: "%Y%m%d" | minus: 31..0) %}
+{% assign total_visits = total_visits | plus: site.analytics.all[date] %}
+{% endfor %}
+{% assign total_visits = total_visits | default: 0 %}
+<p>本站最近 30 天的访问量为：{{ total_visits }}</p>
+{% endif %}
 
 {% for post in paginator.posts %}
 <div class="post-preview">
@@ -48,9 +58,6 @@ description: "「 To Infinity and Beyond! 」<br>
 {% endif %}
 
 
-{% if site.google_analytics %}
-  {% include google-analytics.html %}
-{% endif %}
 
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+
+
