@@ -8,3 +8,10 @@
 </script>
 
 
+
+{% assign total_visits = 0 %}
+{% for date in (site.time | date: "%Y%m%d" | minus: 30..0) %}
+{% assign total_visits = total_visits | plus: site.analytics.all[date] %}
+{% endfor %}
+{% assign total_visits = total_visits | default: 0 %}
+<p>本站最近 30 天的访问量为：{{ total_visits }}</p>
