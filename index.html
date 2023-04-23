@@ -6,19 +6,19 @@ description: "「 To Infinity and Beyond! 」<br>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <span id="busuanzi_container_site_pv" class="post-title">Welcome! You are the <span id="busuanzi_value_site_pv"></span>th visitor to my blog.</span>
 
-{% if site.google_analytics %}
+<!-- {% if site.google_analytics %}
 {% assign total_visits = 0 %}
 {% assign tomorrow = site.time | date: "%Y-%m-%d" | date: "%s" | plus: 86400 | date: "%Y-%m-%d" %}
 {% assign tomorrow_date = tomorrow | date: "%Y-%m-%d" %}
 {% assign thirty_days_ago = tomorrow_date | date: "%s" | minus: 2592000 | date: "%Y-%m-%d" %}
 
 {% for date in (tomorrow_date | date: "%s" | minus: thirty_days_ago | divided_by: 86400 | range: 0..30) %}
-<!-- {{date}}   -->
+
 {% assign total_visits = total_visits | plus: site.analytics.all[date | date: "%Y%m%d"] %}
 {% endfor %}
 {% assign total_visits = total_visits | default: 0 %}
 <p>本站最近 30 天的访问量为：{{ total_visits }}</p>
-{% endif %}
+{% endif %} -->
 
 {% for post in paginator.posts %}
 <div class="post-preview">
