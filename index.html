@@ -8,8 +8,13 @@ description: "「 To Infinity and Beyond! 」<br>
 
 {% if site.google_analytics %}
 {% assign total_visits = 0 %}
-{% for date in (site.time | date: "%Y%m%d" | minus: 31..0) %}
-{% assign total_visits = total_visits | plus: site.analytics.all[date] %}
+{% assign tomorrow = site.time | date: "%Y-%m-%d" | date: "%s" | plus: 86400 | date: "%Y-%m-%d" %}
+{% assign tomorrow_date = tomorrow | date: "%Y-%m-%d" %}
+{% assign thirty_days_ago = tomorrow_date | date: "%s" | minus: 2592000 | date: "%Y-%m-%d" %}
+
+{% for date in (tomorrow_date | date: "%s" | minus: thirty_days_ago | divided_by: 86400 | range: 0..30) %}
+<!-- {{date}}   -->
+{% assign total_visits = total_visits | plus: site.analytics.all[date | date: "%Y%m%d"] %}
 {% endfor %}
 {% assign total_visits = total_visits | default: 0 %}
 <p>本站最近 30 天的访问量为：{{ total_visits }}</p>
