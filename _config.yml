@@ -74,7 +74,7 @@ ga_domain: huangxuan.me
 
 # Sidebar settings
 sidebar: true # whether or not using Sidebar.
-sidebar-about-description: "Keep Going Everyday <br> MSCS@SIT / MSF@CUHK"
+sidebar-about-description: "<b>To Infinity and Beyond!!</b> <br> MSCS@SIT / MSF@CUHK"
 sidebar-avatar: ./img/avatar-hux.jpg # use absolute URL, seeing it's used in both `/` and `/about/`
 
 # Featured Tags
@@ -110,4 +110,7 @@ jekyll-analytics:
   provider: "google-gtag"
   options:
     measurement_id: "G-QSX9RGXGEW" # 替换为您的Google Analytics跟踪ID
+
+wpm: 200
+
 
