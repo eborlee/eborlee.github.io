@@ -97,9 +97,7 @@ layout: default
 </article>
 
 <!-- add support for mathjax by voleking-->
-{% if page.mathjax %}
-  {% include mathjax_support.html %}
-{% endif %}
+
 
 {% if site.netease_comment %}
 <!-- 网易云跟帖JS代码 start -->
@@ -135,6 +133,10 @@ layout: default
 <!-- disqus 公共JS代码 end -->
 {% endif %}
 
+{% include mathjax_support.html %}
+
+
+
 
 {% if site.anchorjs %}
 <!-- async load function -->
@@ -148,6 +150,8 @@ layout: default
       s.parentNode.insertBefore(o, s);
     }
 </script>
+
+
 <!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
 <script>
     async("//cdnjs.cloudflare.com/ajax/libs/anchor-js/1.1.1/anchor.min.js",function(){
@@ -171,3 +175,24 @@ layout: default
     }
 </style>
 {% endif %}
+
+
+<script>
+    (function removeBrackets() {
+  function replaceBrackets(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      node.textContent = node.textContent.replace(/\\\[/g, '').replace(/\\\]/g, '');
+      node.textContent = node.textContent.replace(/\\\(/g, '').replace(/\\\)/g, '');
+    } else {
+      for (let child of node.childNodes) {
+        replaceBrackets(child);
+      }
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    replaceBrackets(document.body);
+  });
+})();
+
+</script>
