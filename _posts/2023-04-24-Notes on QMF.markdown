@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Notes - QMF and MathModelling"
-subtitle:   " \"Let's Change of Measure!\""
+title:      "Notes - QMF and MathModelling of CUHK"
+subtitle:   " \"Measure Theory, Ito, GBM, Stochastic Calculus, Risk-Neutral Pricing, MC...\""
 date:       2023-04-24 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
@@ -17,7 +17,7 @@ tags:
 
 2023-04-24
 
-Thanks for my professors, Dr. Willem J. Van Vliet, Mr. Keith Law and Mr. Kelvin Lam
+Thanks for my professors, Dr. Willem J. Van Vliet, Dr. Keith Law and Mr. Kelvin Lam
 
 Yibo Li
 
