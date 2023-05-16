@@ -44,7 +44,24 @@ http://eborlee.github.io
 
 
 
-3 Generic Programming and Template Classes
+### 3 Generic Programming and Template Classes
+
+## Part III: Classes and Protocols
+
+### Chapter 13(旧10)：Interfaces, Protocols and ABCs
+
+**<u>Summary 从鸭子类型到白鹅类型，再到静态类型检查：</u>**
+
+鸭子类型，只关注对象的行为，即有无实现特定的协议，是否包含所需的方法、签名和语义即可作为子类来直接使用，比如实现了\__len\__就可以使用len()，该内置函数并不关心用户传进来的对象的类型，而只关心其有无实现\__len\__。
+
+因此最佳实践是直接try except，但是有些场景不适用。如当多个本不相关的类(Painter, Lottery)都有相同名字的函数draw，某个函数接收参数对象，其函数体内的try except直接调用该参数对象的draw函数，不会被tryexcept捕获，行为无法预估。
+
+因此引出白鹅类型，白鹅类型即将子类显式地继承抽象基类，明确声明ABC内的抽象接口(尽管有些接口可能使用不到)。此时可以使用isinstance和issubclass，来判断是否为子类或实例。但注意，尽管白鹅类型使用这两个函数来判断，但反过来使用这两个函数return True的并不一定是白鹅类型。因为当基类实现了subclasshook特殊方法，要求子类的\__dict\__中必须包含指定的某个方法名（类的\__dict\__ 与对象的不同，对象的仅包含属性，但类的包含方法），就可以通过isinstance测试。因此，不通过显式继承，而通过register（不会自动继承基类的属性和方法）成为虚拟子类，甚至只是自己有这个函数名，都会通过issubclass的检查。（因此推荐，显式继承以确保子类相同的行为，*或register*，这里我有点疑惑，仅仅register也不能保证行为一样，也许作者意思是当你register的时候你确实知道你该主动实现那些方法？可能作用的对象不同，register是对子类进行操作而subclasshook是对基类操作。总之就是，在基类使用subclasshook没有必要，麻烦且不能保证拥有改名字的类真的有想要的行为）
+
+此时，又产生了新的问题，有些类，拥有某个函数名，但该函数并不会成功执行，而是raise Exception，但仍能通过isinstance。比如complex类拥有\__float\__函数，但调用该函数并不能真正的将一个复数对象转换成float，而是抛出异常。这种情况下，complex仍会被视作为Protocol SupportsFloat的子类，因为该协议要求实现这样一个float函数，complex的确有这个函数。行为模式不同但能通过isinstance，是有隐患的。
+
+由此引出static type checking。创建继承自typing.protocol的协议类，声明函数的签名类型，返回类型进行约束，必须完全一致。mypy静态类型检查工具，该工具在编译时进行检查，同时也可以加上@runtime_checkable来在运行时检查类型。比使用isinstance issubclass这种代码的方式要更加的可扩展、可读性。
+
 
 
 

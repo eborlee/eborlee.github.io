@@ -1,8 +1,8 @@
 ---
 layout:     post
-title:      "Notes - QMF and MathModelling of CUHK"
+title:      "Pandas Tricks"
 subtitle:   " \"Measure Theory, Ito, GBM, Stochastic Calculus, Risk-Neutral Pricing, MC...\""
-date:       2023-04-24 12:00:00
+date:       2023-03-24 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
 mathjax: true
