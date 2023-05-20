@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "Notes - Fluent Python"
-subtitle:   " \"Never underestimate Python because of its simplicity.\""
+subtitle:   " \"Pythonic\""
 date:       2023-04-23 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
@@ -12,7 +12,6 @@ tags:
 ---
 
 > “Beautiful is better than ugly.”
-
 
 # Notes on Fluent Python
 
@@ -32,11 +31,7 @@ http://eborlee.github.io
 
 ### 1 Python Data Structure
 
-```c++
-
-```
-
-
+Magic Method is Python's style.
 
 ### 2 Arrays and Sequence
 
@@ -44,11 +39,27 @@ http://eborlee.github.io
 
 
 
-### 3 Generic Programming and Template Classes
+3 Generic Programming and Template Classes
+
+
 
 ## Part III: Classes and Protocols
 
-### Chapter 13(旧10)：Interfaces, Protocols and ABCs
+### Chapter 13(旧10)：Interfaces, Protocols and ABCs 接口，协议和抽象基类
+
+Summary: From Duck Typing to Swan Typing, and Static Type Checking:
+
+<mark>Duck Typing</mark> focuses on an object's behavior, specifically whether it implements a certain protocol, contains the required methods, signatures, and semantics. For example, if an object implements `__len__`, it can be used with the `len()` function. The built-in `len()` function doesn't care about the object's type; it only cares about whether it implements `__len__`.
+
+The best practice is often to use a try-except approach, but there are scenarios where it may not be suitable. For instance, when multiple unrelated classes (e.g., Painter, Lottery) have a function named `draw`, and a function takes an object as a parameter and directly calls its `draw` function within a try-except block, it may not be caught by the try-except block, and the behavior becomes unpredictable.
+
+This leads to <mark>Swan Typing</mark>, where subclasses explicitly inherit from abstract base classes (ABCs) and declare the abstract interfaces within them (even if some interfaces are not utilized). The `isinstance` and `issubclass` functions can then be used to determine if an object is an instance or subclass. However, it's important to note that just because `isinstance` or `issubclass` returns True, it doesn't necessarily mean it's a Swan Type. This is because if the base class implements the `subclasshook` special method, requiring that the subclass's `__dict__` must contain a specified method name (the class's `__dict__` is different from an object's `__dict__` as it contains methods), it can pass the `isinstance` test. Therefore, using `subclasshook` without explicit inheritance, or using only `register` (which doesn't automatically inherit base class attributes and methods) to become a virtual subclass, or simply having the same function name, can all pass the `issubclass` check. (Hence, it is recommended to use explicit inheritance to ensure consistent behavior or `register` . 
+
+<mark>Here, I'm a bit confused</mark> because registering alone cannot guarantee the same behavior. Perhaps the author means when you register, you should know which methods you need to implement proactively? Maybe the intended use target are different for `register` and `subclasshook`. In any case, using `subclasshook` in the base class is unnecessary, troublesome, and cannot guarantee that a class with the same name actually has the desired behavior.)
+
+However, a new problem arises. Some classes may have a function name but the function itself doesn't execute successfully; it may raise an exception instead of behaving as expected. For example, the `complex` class has a `__float__` function, but calling this function doesn't actually convert a complex object into a float; it raises an exception instead. However, `complex` would still be considered a subclass of the `Protocol` `SupportsFloat` because the protocol requires implementing such a `float` function, and `complex` does have that function. This situation, where the behavior differs but `isinstance` still passes, has its risks.
+
+This leads to <mark>static type checking</mark>. Protocols, which inherit from `typing.Protocol`, can be created to declare the function signature types and return types, providing strict constraints. Tools like mypy can perform static type checking at compile time. Additionally, the `@runtime_checkable` decorator can be used to check types at runtime. This approach using static type checking and protocols provides better extensibility and readability compared to using `isinstance` and `issubclass` in the code.
 
 **<u>Summary 从鸭子类型到白鹅类型，再到静态类型检查：</u>**
 
@@ -58,10 +69,116 @@ http://eborlee.github.io
 
 因此引出白鹅类型，白鹅类型即将子类显式地继承抽象基类，明确声明ABC内的抽象接口(尽管有些接口可能使用不到)。此时可以使用isinstance和issubclass，来判断是否为子类或实例。但注意，尽管白鹅类型使用这两个函数来判断，但反过来使用这两个函数return True的并不一定是白鹅类型。因为当基类实现了subclasshook特殊方法，要求子类的\__dict\__中必须包含指定的某个方法名（类的\__dict\__ 与对象的不同，对象的仅包含属性，但类的包含方法），就可以通过isinstance测试。因此，不通过显式继承，而通过register（不会自动继承基类的属性和方法）成为虚拟子类，甚至只是自己有这个函数名，都会通过issubclass的检查。（因此推荐，显式继承以确保子类相同的行为，*或register*，这里我有点疑惑，仅仅register也不能保证行为一样，也许作者意思是当你register的时候你确实知道你该主动实现那些方法？可能作用的对象不同，register是对子类进行操作而subclasshook是对基类操作。总之就是，在基类使用subclasshook没有必要，麻烦且不能保证拥有改名字的类真的有想要的行为）
 
-此时，又产生了新的问题，有些类，拥有某个函数名，但该函数并不会成功执行，而是raise Exception，但仍能通过isinstance。比如complex类拥有\__float\__函数，但调用该函数并不能真正的将一个复数对象转换成float，而是抛出异常。这种情况下，complex仍会被视作为Protocol SupportsFloat的子类，因为该协议要求实现这样一个float函数，complex的确有这个函数。行为模式不同但能通过isinstance，是有隐患的。
+此时，又产生了新的问题，有些类，拥有某个函数名，但该函数并不会成功执行，而是raise Exception，但仍能通过isinstance(经过测试，这种必须是个抽象基类+该abc定义了subclasshook方法)。比如complex类拥有\__float\__函数，但调用该函数并不能真正的将一个复数对象转换成float，而是抛出异常。这种情况下，complex仍会被视作为Protocol SupportsFloat的子类，因为该协议要求实现这样一个float函数，complex的确有这个函数。行为模式不同但能通过isinstance，是有隐患的。
 
 由此引出static type checking。创建继承自typing.protocol的协议类，声明函数的签名类型，返回类型进行约束，必须完全一致。mypy静态类型检查工具，该工具在编译时进行检查，同时也可以加上@runtime_checkable来在运行时检查类型。比使用isinstance issubclass这种代码的方式要更加的可扩展、可读性。
 
+
+
+### Chapter 14 Inheritance: For Better or for Worse 继承优缺点
+
+Handling multiple inheritance principles:
+
+1. Distinguish between interface inheritance and implementation inheritance: Determine whether the purpose of creating a subclass is to define "what" the subclass is or to avoid code duplication.
+2. Explicitly represent interfaces using abstract base classes (ABCs): If a class's purpose is to define an interface, explicitly declare it as a subclass of `abc.ABC` or inherit from other abstract base classes.
+3. Reuse code using `mixins`: If a class's purpose is to avoid code duplication and provide method implementations for multiple unrelated subclasses, define that class as a mixin class to package the methods. Mixin classes should not be instantiated directly.
+4. Clearly indicate mixins in the name: The class name should include the term "mixin" to indicate its purpose.
+5. Abstract base classes can be mixins: Mixin classes can also be subclasses of abstract base classes because abstract base classes can have method implementations. However, the reverse is not true.
+6. Avoid subclassing from multiple concrete classes: When a concrete class uses multiple inheritance, it should, at most, inherit from one concrete class, while other superclasses should preferably be abstract base classes or mixins.
+7. Provide aggregate classes for users: For multiple inheritance, create aggregate classes that do not provide any class definition themselves.
+
+处理多重继承的原则：
+
+1. 区分接口继承和实现继承：创建子类的目的到底是为了定义子类『是什么』的还是为了避免代码重复？
+
+2. 使用抽象基类显式表示接口：若一个类的目的是定义接口，要明确声明为abc.ABC的子类或继承其他抽象基类
+
+3. 通过mixin来重用代码：若一个类的目的是避免代码重复，为多个不想管的子类提供方法实现，不强调『是什么』的关系，要将该类明确定义为 mixin class以打包方法。<u>混入类不应实例化。</u>
+
+4. 在名称中明确指名mixin。类名中应包括mixin字样。
+
+5. 抽象基类可以是mixin class，因为抽象基类中也可以实现方法，但反过来不成立
+
+6. 不要子类化多个具体类。一个具体类进行多重继承，最多应只继承一个具体类，其他的超类最好都是抽象基类或混入类
+
+7. 为用户提供聚合类aggregate class。多重继承，自身不提供任何类定义。
+
+```python
+class A:
+    def method_a(self):
+        print("Method A")
+
+class B:
+    def method_b(self):
+        print("Method B")
+
+class C:
+    def method_c(self):
+        print("Method C")
+
+class D:
+    def method_d(self):
+        print("Method D")
+
+class AggregateClass(A, B, C, D):
+    pass
+
+obj = AggregateClass()
+obj.method_a()  # 调用超类 A 的方法
+# 输出：Method A
+
+obj.method_b()  # 调用超类 B 的方法
+# 输出：Method B
+
+obj.method_c()  # 调用超类 C 的方法
+# 输出：Method C
+
+obj.method_d()  # 调用超类 D 的方法
+# 输出：Method D
+
+```
+
+8. 优先使用对象组合，而非类继承：即将类的实例作为其他类的属性来调用方法。
+
+```python
+class Engine:
+    def __init__(self, horsepower):
+        self.horsepower = horsepower
+
+    def start(self):
+        print("Engine started.")
+
+    def stop(self):
+        print("Engine stopped.")
+
+class Car:
+    def __init__(self, make, model, engine):
+        self.make = make
+        self.model = model
+        self.engine = engine
+
+    def start(self):
+        print(f"{self.make} {self.model} is starting the engine.")
+        self.engine.start()
+
+    def stop(self):
+        print(f"{self.make} {self.model} is stopping the engine.")
+        self.engine.stop()
+
+engine = Engine(200)
+car = Car("Toyota", "Camry", engine)
+
+car.start()
+# 输出：
+# Toyota Camry is starting the engine.
+# Engine started.
+
+car.stop()
+# 输出：
+# Toyota Camry is stopping the engine.
+# Engine stopped.
+
+```
 
 
 
@@ -207,11 +324,15 @@ if __name__ == "__main__":
 
   4. Keyword await causes the supervisor to be suspended and return the control back to the event loop.
 
-  5. The event loop then check the event queue and since spin has higher priority than slow, it would be executed as the first one.
+  5. The event loop then check the event queue and since spin has higher priority than slow, it would be executed as the first one. 存疑 现在看起来是slow先拿到控制权
   6. Spin and supervisor would get the control alternatively.
   7. （？）Once the slow() returns, the supervisor would continute to execute, i.e. cancel the spin. 
   8. Then the spin is ended.
   9. Finally, the supervisor also quited and the event loop terminated.
+
+
+
+
 
 
 
@@ -349,7 +470,9 @@ class FrozenJSON:
 
 
 
-Flexible Object Creation with \__new__
+**Flexible Object Creation with \__new__**
+
+new方法先于对象创建，init在对象创建之后执行
 
 ```python
 class FrozenJsonNew:
