@@ -1,16 +1,15 @@
 ---
 layout:     post
 title:      "Pandas Tricks"
-subtitle:   " \"Measure Theory, Ito, GBM, Stochastic Calculus, Risk-Neutral Pricing, MC...\""
+subtitle:   " \"\""
 date:       2023-03-24 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
 mathjax: true
 catalog: true
 tags:
-    - Math
-    - Notes
-    - Quant
+    - Python
+    - Pandas
 ---
 
 # Notes on Courses QMF & MathModelling of CUHK
@@ -231,6 +230,7 @@ Then we could solve this PDE with one-dimensional Poisson formula for heat condu
 
 
 ### Method 2: Short Way
+
 
 
 
