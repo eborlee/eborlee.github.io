@@ -1694,3 +1694,22 @@ img::-moz-selection {
 .no-scroll {
   overflow-y: hidden;
 }
+
+.toc {
+  list-style: none;
+  padding: 0;
+}
+
+.toc-item {
+  margin-left: 10px;
+}
+
+.toc-item a {
+  text-decoration: none;
+}
+
+.toc-item.level2 {
+  margin-left: 20px;
+}
+
+/* 根据需要自定义更多级别的缩进和样式 */

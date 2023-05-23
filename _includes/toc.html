@@ -1,0 +1,26 @@
+<ul class="toc">
+    {% assign max_level = 2 %}
+    {% assign current_level = 1 %}
+    {% for heading in page.content | scan: '<h[1-6] id=".+?">' %}
+      {% assign level = heading | replace: '<h', '' | replace: ' id=".+?">', '' %}
+      {% assign title = heading | replace: '<.+?>', '' %}
+      {% if level | plus: 0 <= max_level %}
+        {% if level | plus: 0 > current_level %}
+          <ul>
+        {% elsif level | plus: 0 < current_level %}
+          {% assign diff = current_level | minus: level | plus: 1 %}
+          {% for i in (1..diff) %}
+            </ul>
+          {% endfor %}
+        {% endif %}
+        <li class="toc-item level{{ level }}">
+          <a href="#{{ heading | split: ' id="' | last | replace: '">','' }}">{{ title }}</a>
+        </li>
+        {% assign current_level = level | plus: 0 %}
+      {% endif %}
+    {% endfor %}
+    {% for i in (1..current_level) %}
+      </ul>
+    {% endfor %}
+  </ul>
+  

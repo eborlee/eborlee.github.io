@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - Numerical Methods in Finance with C++"
+title:      "Notes - Numerical Methods in Finance with C++ 金融数值分析方法"
 subtitle:   " \"\""
 date:       2023-05-01 12:00:00
 author:     "Yibo Li"
@@ -27,7 +27,10 @@ http://eborlee.github.io
 
 ## Table Of Contents
 
-[TOC]
+
+* TOC
+{:toc}
+
 
 ## 1 Binomial Pricer
 

@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - Fluent Python"
+title:      "Notes - Fluent Python 流畅的Python"
 subtitle:   " \"Pythonic\""
 date:       2023-04-23 12:00:00
 author:     "Yibo Li"
@@ -25,7 +25,10 @@ http://eborlee.github.io
 
 ## Table Of Contents
 
-[TOC]
+
+* TOC
+{:toc}
+
 
 
 
@@ -43,9 +46,11 @@ Magic Method is Python's style.
 
 
 
-## Part III: Classes and Protocols
+<!-- ## Part III: Classes and Protocols -->
+## **Part III: Classes and Protocols**
 
-### Chapter 13(旧10)：Interfaces, Protocols and ABCs 接口，协议和抽象基类
+
+### 13(旧10)：Interfaces, Protocols and ABCs 接口，协议和抽象基类
 
 Summary: From Duck Typing to Swan Typing, and Static Type Checking:
 
@@ -75,7 +80,7 @@ This leads to <mark>static type checking</mark>. Protocols, which inherit from `
 
 
 
-### Chapter 14 Inheritance: For Better or for Worse 继承优缺点
+### 14 Inheritance: For Better or for Worse 继承优缺点
 
 Handling multiple inheritance principles:
 

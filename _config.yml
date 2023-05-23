@@ -119,3 +119,9 @@ wpm: 200
 # plugins:
 #   - jekyll-mathjax
 
+markdown: kramdown
+# kramdown:
+#   toc_levels: "1..6"
+#   toc_auto_insert: true
+
+
