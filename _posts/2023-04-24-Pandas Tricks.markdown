@@ -26,10 +26,11 @@ http://eborlee.github.io
 
 ## Table Of Contents
 
-[TOC]
+* TOC
+{:toc}
 
 
-
+---
 ### **1. Cython**
 
 Basic Usage: Compile .pyx file and import the compiled module into .py file
@@ -170,3 +171,43 @@ Cython提升显著。但是引入纯c++函数反倒没cdef编写的函数快。�
 
 也可以`python setup.py bdist_wheel `会自动把编译后的依赖打包进去，使用时不再需要编译器和Cython，但是wheel也不再跨平台。预编译，安装时不需要Cython，便捷。但是mac打包的wheel不能在windows和linux上安装，反之亦然。
 
+进一步优化c++函数：py调用时传入np.array, c++中使用NumPy C API操作numpy数组。避免list转vector。
+
+```cython
+@cython.boundscheck(False)
+@cython.wraparound(False)
+cpdef np.ndarray[double] row_sum_cpp(np.ndarray[np.double_t, ndim=2] df):
+    cdef vector[double] result = row_sum_cpp_original(df)
+    return np.array(result)
+```
+
+```c++
+#include <vector>
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
+#include <numpy/arrayobject.h>
+
+std::vector<double> row_sum_cpp_original(PyArrayObject* np_array){
+    int nrows = PyArray_DIM(np_array, 0);
+    int ncols = PyArray_DIM(np_array, 1);
+    std::vector<double> result(nrows, 0.0);
+
+    for(std::size_t i = 0; i < nrows; i++){
+        for(std::size_t j = 0; j < ncols; j++){
+
+            // 从 NumPy 数组获取值 该宏返回void指针，强制转换为double*，再解引用获取值
+            double value = *(double*)PyArray_GETPTR2(np_array, i, j);
+            result[i] += value;
+        }
+    }
+    return result;
+}
+```
+
+```python
+>>>
+Python function time:6.40712s
+Cython function time:0.00473s
+Cython C++ function time:0.01663s
+```
+
+耗时大幅缩减。
