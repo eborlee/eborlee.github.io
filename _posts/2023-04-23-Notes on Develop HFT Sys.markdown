@@ -2,7 +2,7 @@
 layout:     post
 title:      "Notes - Developing High-Frequency Trading Systems 高频交易系统开发"
 subtitle:   " \"HFT in C++/Python/Java\""
-date:       2023-05-10 12:00:00
+date:       2023-04-28 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
 catalog: true
