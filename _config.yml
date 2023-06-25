@@ -92,6 +92,7 @@ service-worker: true
 # Friends
 friends:
   [
+    { title: "Wanlin Juan", href: "https://wanlinjuan.github.io/" }
     # { title: "乱序（Midare）", href: "http://mida.re/" },
     # { title: "Ebn Zhang", href: "https://ebnbin.dev/" },
     # { title: "Kun Qian", href: "http://kunq.me" },
