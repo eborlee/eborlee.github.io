@@ -1,15 +1,14 @@
 ---
 layout:     post
-title:      "[Ebor]Deep Learning Practice in Multi-Factor Modeling 多因子深度学习实践整理"
+title:      "[Ebor] Deep Learning Practice in Multi-Factor Modeling 多因子深度学习实践整理"
 subtitle:   " \"Every little bit helps\""
-date:       2023-04-27 12:00:00
+date:       2023-07-01 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
 mathjax: true
 catalog: true
 tags:
-    - Notes
-    - Math
+    - Deep Learning
     - Quant
 ---
 
