@@ -187,7 +187,9 @@ car.stop()
 
 
 
-### 19 Concurrency Models in Python
+## **Part IV Control Flow 控制流程**
+
+### 19 Concurrency Models in Python 并发模型
 
 Basic compare the usage differences among multi-thread, multi-process and coroutine:
 
@@ -334,6 +336,156 @@ if __name__ == "__main__":
   7. （？）Once the slow() returns, the supervisor would continute to execute, i.e. cancel the spin. 
   8. Then the spin is ended.
   9. Finally, the supervisor also quited and the event loop terminated.
+
+> **Ebor: 我有个疑问，当slow内部执行到is_prime_async 挂起之后，这个函数内部判断是否为质数的代码是否在运行？在被谁运行？即被哪个线程或者进程之类的东西在运行？这个判断质数的代码如果还在运行的话，为什么事件循环还可以安排其他代码运行？**
+>
+> Chatgpt: 在Python的`asyncio`库中，协程的执行是由事件循环来调度的。当一个协程在`await`表达式处挂起时，它的状态被保存下来，然后事件循环可以选择其他可以运行的协程来执行。
+>
+> 在你的例子中，当`is_prime_async`函数在`await`表达式处挂起时，它的状态被保存下来，然后事件循环可以选择其他可以运行的协程，比如`spin`协程。这就是为什么`spin`的旋转不会被阻塞。
+>
+> 然而，这并不意味着`is_prime_async`函数内部的代码在挂起期间仍在运行。实际上，当一个协程在`await`表达式处挂起时，它的执行被暂停，直到事件循环再次选择它继续执行。这就是为什么我们说协程是协作式的：它们需要显式地让出控制权，以便事件循环可以调度其他协程。
+>
+> 在你的例子中，`is_prime_async`函数内部的代码在挂起期间不会运行。只有当事件循环再次选择`slow`协程，并在`await is_prime_async`表达式处恢复执行时，`is_prime_async`函数内部的代码才会继续运行。
+>
+> 需要注意的是，Python的`asyncio`库是单线程的，它使用一个单独的线程（通常是主线程）来运行所有的协程。因此，`is_prime_async`函数内部的代码是在同一个线程中运行的，即使它在`await`表达式处挂起和恢复多次。
+>
+> 
+>
+> **Ebor: 那遇到了await is_prime_async之后该函数被挂起，意思是不会进入到这个函数内部 就会直接挂起吗？那么什么时候会真正运行这个prime_async？**
+>
+> Chatgpt: 在Python的`asyncio`库中，当你在协程中使用`await`关键字调用另一个协程时，当前协程会立即挂起，然后开始执行被调用的协程。这意味着，当你在`slow`协程中调用`await is_prime_async(5_000_111_000_222_021)`时，`slow`协程会立即挂起，然后开始执行`is_prime_async`协程。
+>
+> 然而，如果`is_prime_async`协程内部也有`await`表达式，那么`is_prime_async`协程也会在那里挂起，然后事件循环可以选择其他可以运行的协程来执行。这就是为什么`spin`协程可以在`is_prime_async`协程挂起期间运行。
+>
+> 当`is_prime_async`协程完成执行（也就是到达了协程函数的末尾或者遇到了`return`语句），控制权会返回到调用它的协程，也就是`slow`协程。然后，`slow`协程会在`await is_prime_async(5_000_111_000_222_021)`表达式处恢复执行。
+>
+> 需要注意的是，`is_prime_async`协程的执行是由事件循环来调度的，就像所有其他的协程一样。这意味着，即使`is_prime_async`协程在`await`表达式处挂起，事件循环也可以在稍后的某个时间点选择它继续执行。
+>
+> 
+>
+> Ebor: **这是is_prime_async的实现。请你结合这个代码继续分析。是否 is_prime_async协程和spin协程由于各自都有 await asyncio.sleep，所以交替让出控制权再交替获得控制权？**
+>
+> Chatgpt: 是的，你的理解是正确的。在这个`is_prime_async`协程的实现中，有一个`await asyncio.sleep(0)`表达式。这个表达式会立即挂起`is_prime_async`协程，然后事件循环可以选择其他可以运行的协程来执行。这就是为什么`spin`协程可以在`is_prime_async`协程挂起期间运行。
+>
+> 当`await asyncio.sleep(0)`表达式的等待时间结束（在这个例子中，等待时间是0，所以它会立即结束），`is_prime_async`协程会被事件循环选择继续执行，直到它再次遇到`await asyncio.sleep(0)`表达式或者到达协程函数的末尾。
+>
+> 同样，`spin`协程中的`await asyncio.sleep(.1)`表达式也会导致`spin`协程挂起，然后事件循环可以选择其他可以运行的协程来执行。这就是为什么`is_prime_async`协程可以在`spin`协程挂起期间运行。
+>
+> 因此，`is_prime_async`协程和`spin`协程会交替让出控制权，然后再交替获得控制权。这就是Python的`asyncio`库提供的异步I/O支持的核心部分，它允许你编写可以并发执行的代码，而不需要使用线程或进程。
+>
+> 
+>
+> **Ebor: 上述两个协程交替获取和让出控制权的过程中，是否supervisor和slow协程都不会参与到这个获取的过程中？因为slow需要等待is_prime_async返回，而supervisor需要等待slow返回？**
+>
+> ChatGPT: 是的，你的理解是正确的。在`is_prime_async`协程和`spin`协程交替获取和让出控制权的过程中，`supervisor`协程和`slow`协程都不会参与到这个获取的过程中。
+>
+> 这是因为`supervisor`协程在`await slow()`表达式处挂起，等待`slow`协程完成；而`slow`协程在`await is_prime_async(5_000_111_000_222_021)`表达式处挂起，等待`is_prime_async`协程完成。只有当`is_prime_async`协程完成，`slow`协程才能恢复执行，然后当`slow`协程完成，`supervisor`协程才能恢复执行。
+>
+> 因此，只有`is_prime_async`协程和`spin`协程在这个过程中是活跃的，它们会交替获取和让出控制权。这就是Python的`asyncio`库提供的异步I/O支持的核心部分，它允许你编写可以并发执行的代码，而不需要使用线程或进程。
+>
+> 
+
+await会使得调用者交出控制权，被挂起（不是停止），await的函数在后台运行。
+
+> `总结协程和线程版本：
+> 1.asyncio.Task约等于threadings.Thread
+> 2.Task对象驱动一个协程对象，Thread对象invokes a callable
+> 3.协程通过明确的await来交出控制权
+> 4.不需要自己实例化Task，而是通过create_task
+> 5.当asyncio.create_task返回一个task对象，已经排期准备好run了。而Thread对象需要明确的start函数调用来run
+> 6.多线程版本的supervisor中，slow只是一个普通函数，被主线程调用；而异步版的supervisor里，slow是一个由await驱动的协程
+> 7.终止线程没有明确api，需要通过设置类似done event然后判断状态这种方式；而协程可以使用Task.cancel()实例方法，其raise CancelledError在await处
+> 8.supervisor协程必须由主线程通过哦asyncio.run来启动`
+
+By the way, what is the difference between time.time() and time.perf_counter():
+
+> 适用场景和精度有所不同。`time.time()` 返回的是自纪元（Epoch，通常为1970年1月1日00:00:00）以来的秒数。这个时间是按照墙上时钟的时间计算的，可能会受到许多因素的影响，比如系统时钟的调整。因此，`time.time()` 更适用于获取实际的日期和时间。`time.perf_counter()` 返回的是一个性能计数器的值，这个计数器提供了最高可用的计时器分辨率（在各个平台上都是如此）。与 `time.time()` 不同，`time.perf_counter()` 返回的时间是单调的（即只增不减），并且不受系统时钟调整的影响。因此，`time.perf_counter()` 更适合用来测量短时间内的代码运行时间。
+
+
+
+> **Ebor:**
+>
+> asyncio异步的方式是否对于程序员来说，对程序的执行控制要比多线程方式好？我的意思是，是否存在这种差异，即多线程更加取决于cpu层面调度的随机性，而异步主要在代码层面，所以更可控？
+>
+> **ChatGPT:**
+>
+> 你的理解是基本正确的。多线程和异步编程都是处理并发的方法，但是它们的工作方式和控制粒度有所不同。
+>
+> 多线程：当你使用多线程时，线程的调度（即决定何时暂停一个线程并切换到另一个线程）是由操作系统的线程调度器控制的。这使得线程在某种程度上是“无序”的，因为你不能直接控制哪个线程会在特定的时间点执行。这种情况可能会导致复杂的并发问题，例如竞态条件和死锁，需要通过同步原语（例如锁和信号量）来解决。
+>
+> 异步编程：在异步编程（例如使用asyncio）中，你更直接地控制何时发生上下文切换。当你在协程中使用await关键字时，你正在告诉Python：“现在可以切换到其他任务，我将在这里等待”。这种方式可以使你更好地预测程序的行为，因为上下文切换发生的位置是明确的（即await表达式的位置）。这也使得编写复杂的并发代码变得更简单，因为你不需要使用锁和其他同步原语。
+>
+> 然而，这并不意味着异步编程总是优于多线程。这两种方法都有各自的适用场景。例如，对于I/O密集型任务，异步编程通常是一个很好的选择，因为它可以在等待I/O操作完成时执行其他任务。对于CPU密集型任务，多线程或多进程可能是更好的选择，因为它们可以利用多核CPU的优势。
+
+
+
+### 20 Concurrent Executors 并发执行器
+
+future / concurrent.futures / 
+
+future这个概念是concurrent.futures和asyncio的重要概念，两个库都实现了各自的future类
+
+concurrent.futures 是 Python 的一个并发执行模块，提供了高级别的异步执行接口。该模块实现了 ThreadPoolExecutor 和 ProcessPoolExecutor 这两个类，它们是 Executor 类的子类，用于管理线程池和进程池。这个库提供了一个高级接口，使得异步编程变得更加容易。（根据我的理解，CPU密集型用这个库的ProcessPoolExecutor，IO密集型还是用asyncio异步的写法效率更高，可能多线程还是比单线程资源消耗大？）
+
+比较：依序下载 vs 多线程map vs 多线程submit+as completed
+
+```python
+import time
+from pathlib import Path
+from typing import Callable
+import httpx
+
+"""
+顺序下载
+"""
+POP20_CC = ('CN IN US ID BR PK NG BD RU JP '
+            'MX PH VN ET EG DE IR TR CD FR').split()
+
+BASE_URL = 'http://www.fluentpython.com/data/flags'
+DEST_DIR = Path('downloaded')
+
+
+def save_flag(img: bytes, filename: str):
+    # path = DEST_DIR / filename
+    # with open(path, 'wb') as fp:
+    #     fp.write(img)
+    (DEST_DIR / filename).write_bytes(img)
+
+
+def get_flag(cc: str):
+    url = f'{BASE_URL}/{cc.lower()}/{cc.lower()}.gif'.lower()
+    resp = httpx.get(url, timeout=5, follow_redirects=True)
+    resp.raise_for_status()
+    return resp.content
+
+
+def download_many(cc_list):
+    for cc in sorted(cc_list):
+        img = get_flag(cc)
+        path = cc.lower() + '.gif'
+        # print(path)
+        save_flag(img, path)
+        print(cc, end=' ')
+    return len(cc_list)
+
+
+def main(download_many):
+    DEST_DIR.mkdir(exist_ok=True)
+    t0 = time.perf_counter()
+    count = download_many(POP20_CC)
+    elapsed = time.perf_counter() - t0
+    print(f'\n{count} flags downloaded in {elapsed:.2f}s')
+
+
+if __name__ == '__main__':
+    main(download_many)
+```
+
+
+
+
+
+
 
 
 
