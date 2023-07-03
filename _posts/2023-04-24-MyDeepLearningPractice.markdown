@@ -25,12 +25,13 @@ http://eborlee.github.io
 
 ## Table Of Contents
 
-[TOC]
+* TOC
+{:toc}
 
 ### 1. Methods of calculating feature importances in deep learning models
 
 1. 中信的做法：*《多因子量化选股系列专题研究—多视角理解基于相关性的因子优化量化与配置》*
-<img src="/Users/admin/Library/Application Support/typora-user-images/image-20230424134815699.png" alt="image-20230424134815699" style="zoom: 33%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/docImg/1.png?raw=true" alt="image-20230424134815699" style="zoom: 33%;" />
 
 2. Integrated Gradients
 
