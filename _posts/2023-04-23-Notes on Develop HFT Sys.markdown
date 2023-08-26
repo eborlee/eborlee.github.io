@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - Developing High-Frequency Trading Systems 高频交易系统开发"
+title:      "Learning - High Freq Trading"
 subtitle:   " \"HFT in C++/Python/Java\""
 date:       2023-04-28 12:00:00
 author:     "Yibo Li"
