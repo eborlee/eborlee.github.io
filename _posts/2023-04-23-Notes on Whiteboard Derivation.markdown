@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - ML Whiteboard Derivation 机器学习白板推导系列"
+title:      "Notes - PRML 机器学习白板推导系列"
 subtitle:   " \"Mathematical Derivation of Machine Learning\""
 date:       2023-04-20 12:00:00
 author:     "Yibo Li"

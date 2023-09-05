@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - Machine Learning for Algo Trading 机器学习算法交易"
+title:      "My Trading Framework Development"
 subtitle:   " \"Every little bit helps\""
 date:       2023-04-20 12:00:00
 author:     "Yibo Li"

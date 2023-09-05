@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Notes - Numerical Methods in Finance with C++ 金融数值分析方法"
-subtitle:   " \"\""
+title:      "Notes - C++ Learning"
+subtitle:   " \"Numerical Methods\""
 date:       2023-05-01 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
