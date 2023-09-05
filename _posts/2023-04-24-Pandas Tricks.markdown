@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "Pandas Tricks and Optimizations"
-subtitle:   " \"Tricks, Cython, Numba, Polars...\""
+title:      "High Performance Python"
+subtitle:   " \"Cython, Numba, Polars...\""
 date:       2023-05-20 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
