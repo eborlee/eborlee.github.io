@@ -10,7 +10,7 @@ catalog: true
 tags:
     - Python
     - Pandas
-    - Cythonooooo oi  i 
+    - Cython 
     - C++
 ---
 
