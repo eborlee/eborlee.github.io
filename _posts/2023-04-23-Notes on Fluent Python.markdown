@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - Fluent Python 流畅的Python"
+title:      "Notes - Fluent Python | 流畅的Python笔记"
 subtitle:   " \"Pythonic\""
 date:       2023-09-02 12:00:00
 author:     "Yibo Li"

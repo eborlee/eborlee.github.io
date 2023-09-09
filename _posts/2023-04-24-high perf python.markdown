@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "High Performance Python"
+title:      "High Performance Python | 高性能编程"
 subtitle:   " \"Cython, Numba, Polars...\""
 date:       2023-05-20 12:00:00
 author:     "Yibo Li"

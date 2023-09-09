@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - QMF and MathModelling of CUHK 金数笔记"
+title:      "CUHK Notes - QMF and MathModelling | 金数笔记"
 subtitle:   " \"Measure Theory, Ito, GBM, Stochastic Calculus, Risk-Neutral Pricing, MC...\""
 date:       2023-07-01 12:00:00
 author:     "Yibo Li"

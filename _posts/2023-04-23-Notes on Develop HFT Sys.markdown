@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Learning - High Freq Trading"
+title:      "High Freq Trading | 高频交易学习"
 subtitle:   " \"HFT in C++/Python/Java\""
 date:       2023-04-28 12:00:00
 author:     "Yibo Li"

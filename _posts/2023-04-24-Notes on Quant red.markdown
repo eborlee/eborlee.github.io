@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - Quant Job Interview Q & A 量化红宝书"
+title:      "Notes - Quant Job Interview Q & A | 量化红宝书"
 subtitle:   " \"Every little bit helps\""
 date:       2023-04-27 12:00:00
 author:     "Yibo Li"

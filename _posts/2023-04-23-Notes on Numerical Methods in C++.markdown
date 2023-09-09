@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - C++ Learning"
+title:      "Notes - C++ Learning | C++学习笔记"
 subtitle:   " \"Numerical Methods\""
 date:       2023-05-01 12:00:00
 author:     "Yibo Li"

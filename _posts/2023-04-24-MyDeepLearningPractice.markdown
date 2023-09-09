@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "[Ebor] Deep Learning Practice in Multi-Factor Modeling 多因子深度学习实践整理"
+title:      "Deep Learning Practice | 深度学习实践整理"
 subtitle:   " \"Every little bit helps\""
 date:       2023-06-30 12:00:00
 author:     "Yibo Li"
