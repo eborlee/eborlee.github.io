@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Notes - PRML | 机器学习白板推导系列"
+title:      "Notes - PRML&ESL | 机器学习白板推导笔记"
 subtitle:   " \"Mathematical Derivation of Machine Learning\""
 date:       2023-07-20 12:00:00
 author:     "Yibo Li"
@@ -13,8 +13,6 @@ tags:
 ---
 
 
-
-# Notes on Developing High-Frequency Trading Systems
 
 2023-05-10
 

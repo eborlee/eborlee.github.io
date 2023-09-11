@@ -611,3 +611,80 @@ int main(){
     cout<<"u_mat:\n"<<u<<endl<<endl;
 ```
 
+
+# C++ Primer Plus
+
+## Chapter 4. 复合类型
+
+### 4.8 指针、数组和指针算术
+
+- 指针变量+1后，增加量等于其指向类型的字节数。
+- C++将数组名解释为第一个元素的地址, 被解释为这个元素的指针。但本身是一个标识符，不是真正的指针
+- *(stacks + 1)  <==> stacks[1]
+- 对数组使用sizeof得到整个数组的长度，而对指针应用sizeof得到的是指针的字节长度，即使指针指向一个数组。
+- 数组名：首个元素的地址， &数组名：整个数组的地址。数字上这两个地址相同，但是数组名是一个元素字节长度内存块的地址，而&数组名是一个数组整个长度字节内存块的地址。
+
+```c++
+// C++将数组名解释为数组第一个元素的地址
+// wages = &wages[0] = address of first element of array
+double wages[3] = {10.0, 20.0, 30.0};
+short stacks[3] = {3, 2, 1};
+double * pw = wages;
+short * ps = &stacks[0];
+
+cout << "pw=" << pw << ", *pw=" << *pw << endl;
+
+pw = pw + 1;
+cout << "pw=" << pw << ", *pw=" << *pw << endl;
+cout << "ps=" << ps << ", *ps=" << *ps << endl;
+cout << "stacks[0]=" << stacks[0] << ", stacks[1]=" << stacks[1] << endl;
+
+cout << "*stacks=" << *stacks << ", *(stacks+1)=" << *(stacks+1) << endl;
+
+cout<<sizeof(wages)<<endl;
+cout<<sizeof(pw)<<endl;
+
+// 数组名：首个元素的地址， &数组名：整个数组的地址
+cout<<stacks<< ", "<<&stacks<<endl;
+```
+
+```c++
+// output
+pw=0x7ff7b61391f0, *pw=10
+pw=0x7ff7b61391f8, *pw=20
+ps=0x7ff7b61391e2, *ps=3
+stacks[0]=3, stacks[1]=2
+*stacks=3, *(stacks+1)=2
+24
+8
+ 0x7ff7bb3e61e2, 0x7ff7bb3e61e2
+```
+
+
+
+```c++
+short tell[10];
+short (*pas)[10] = &tell;
+//(*pas)[i] 的意思是“解引用指针 pas 得到一个数组，然后访问该数组的第 i 个元素”
+cout<<pas<<endl; // 指针指向的地址
+cout<<pas[0]<<endl; // 也是首元素的地址
+cout<<pas[1]<<endl; // 跳过1个数组，但指向了未定义的内存地址
+cout<<*pas<<endl; // 解引用，数组的首元素的地址
+cout<<(*pas)[0]<<endl; // 解引用之后获取第一个元素的值
+cout<<*(*pas)<<endl; // 第一次解引用获取一个数组的指针，对数组指针再次解引用
+
+//output
+>>> 
+0x7ff7b0bb61d0
+0x7ff7b0bb61d0
+0x7ff7b0bb61e4
+0x7ff7b0bb61d0
+-28656
+-28656
+```
+
+在这个特定的情境下，`pas` 是一个指向长度为10的 `short` 数组的指针。对于 `pas[1]` 的解释在于，编译器认为你想跳过第一个长度为10的 `short` 数组，然后到达第二个这样的数组。当然，在这个特定的例子中，第二个这样的数组并不存在，所以 `pas[1]` 会指向一个未定义的内存区域。
+
+通常，`pointer_to_array[n]` 的意义是“跳过 `n` 个数组，到达第 `n+1` 个数组的起始地址”，这里的数组是 `pointer_to_array` 指针所指向的类型。所以 `pas[1]` 就是 `tell` 数组后面 10（数组长度）个 `short` 类型大小的位置的地址。这通常是一个不安全的操作，因为这个地址可能没有被程序合法地分配。访问这个地址通常会导致未定义的行为。
+
+此外，sizeof(pointer)与sizeof(*sizeof)也是不同的。前者是查询储存该指针本身所需的字节长度，比如4字节或8字节。而后者是查询指针指向的数据类型的大小。
