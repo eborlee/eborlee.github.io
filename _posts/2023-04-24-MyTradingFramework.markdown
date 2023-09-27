@@ -29,6 +29,7 @@ http://eborlee.github.io
 {:toc}
 
 ### 1 Observer Mode 观察者模式
+目的：创建实例时完成观察关系注册绑定，从而在某些事件逻辑触发后，自动完成观察者和被观察者之间的通知和响应，而无需手动显式触发。比如策略完成下单后，TradingEngine可以自动通知Logger, DatabaseManager和Notifier模块完成相应功能，如日志记录、数据库更新和消息推送，而无需子策略开发者显式地费事地编写下单成功后的通知代码。
 
 观察者Observer: 数据库观察者 / 日志观察者 
 
@@ -41,12 +42,12 @@ TradeEngine类实现Subject类，实现以上方法，下单函数order在完成
 抽象基类Observer要求实现抽象方法update，DatabaseManager实现Observer类作为观察者，一旦被被观察者调用update，执行对应的具体逻辑，比如存入数据库；
 
 在main脚本中实例化TradeEngine后register观察者们。
-
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/%E5%AE%9E%E7%9B%98%E6%A1%86%E6%9E%B6/ER%20(2).png?raw=true" alt="image-ER" style="zoom:100%;" />
 
 
 ### 2 多进程通信的对象传递问题
 
-主进程的某些实例对象无法简单地通过传递给子进程
+主进程的某些实例对象无法简单地通过传递给子进程，即使通过进程间通信Queue也不可以。主要原因是无法序列化pickle，比如数据库连接池对象等。
 
 
 
