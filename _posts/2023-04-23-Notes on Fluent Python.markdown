@@ -5,6 +5,7 @@ subtitle:   " \"Pythonic\""
 date:       2023-09-02 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
+multilingual: false
 catalog: true
 tags:
     - Python

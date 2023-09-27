@@ -5,6 +5,7 @@ subtitle:   " \"Numerical Methods\""
 date:       2023-09-01 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
+multilingual: true
 catalog: true
 tags:
     - C++

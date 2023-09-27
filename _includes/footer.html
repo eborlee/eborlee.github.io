@@ -231,7 +231,9 @@
     function setLang(newLang) {
         var params = new URLSearchParams(document.location.search)
         params.set("lang", newLang)
+        // _render()
         document.location.search = params.toString()  // refresh.
+        
     }
 
     // handle render
@@ -239,6 +241,7 @@
         var lang = getLang()
         // en
         if (lang == "en") {
+            
             $select.selectedIndex = 1;
             $en.style.display = "block";
             $en.classList.add("active");
@@ -246,6 +249,7 @@
             $zh.classList.remove("active");
             // default to zh-cn
         } else {
+            
             $select.selectedIndex = 0;
             $zh.style.display = "block";
             $zh.classList.add("active");
@@ -256,6 +260,8 @@
         generateCatalog(".catalog-body");
     }
 
+    
+
     // handle select change
     function onLanChange(index) {
         if (index == 0) {
@@ -264,6 +270,7 @@
             lang = "en"
         }
         setLang(lang)
+        
     }
 
     // init
