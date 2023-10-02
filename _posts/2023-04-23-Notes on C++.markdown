@@ -1,11 +1,11 @@
 ---
 layout:     post
 title:      "Notes - C++ Learning | C++学习笔记"
-subtitle:   " \"Numerical Methods\""
+subtitle:   " \"C++ Primer Plus / Effective C++ / Numerical Methods / My Notes...\""
 date:       2023-09-01 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
-multilingual: true
+multilingual: false
 catalog: true
 tags:
     - C++
@@ -13,10 +13,10 @@ tags:
     - Notes
 ---
 
-> “C++”
+> “Within C++, there is a much smaller and cleaner language struggling to get out.”
 
 
-# Notes on Numerical Methods in Finance with C++
+# Notes - C++ Learning | C++学习笔记
 
 2023-05-08
 
@@ -33,8 +33,19 @@ http://eborlee.github.io
 {:toc}
 
 
+# Book: Numerical Methods in Finance with C++
+
+## 1 Basic Usages
+
+- It is a best practice to almost always set your destructors to be virtual.
+- const double getK() and double getK() const: 后者为常量成员函数，无法修改对象的任何成员变量，除非该变量被声明为mutable。
+
+
+
+
+
 ## 1 Binomial Pricer
- 
+
 #### Ways of passing parameters:
 
 1. Passed By Value: double S(double S0, double U, ...)
@@ -61,17 +72,115 @@ After defining some function protoptypes in .h file: changes to one of the .cpp 
 
 ## 3 American Options
 
+### 3.1 Multiple Inheritance
+
+***<u>菱形继承问题的解决方案：</u>***
+
+- 1.Virtual Inheritance
+- 2.作用域解析运算符
+- 3.重新定义函数
+
+```c++
+#include <iostream>
+using namespace std;
+
+class A
+{
+public:
+    void func(){
+        cout<<"This is A"<<endl;
+    };
+};
+
+class B: virtual public A{
+    public:
+    void func() {
+        cout<<"This is B"<<endl;
+    };
+
+};
+class C: virtual public A{
+    public:
+    void func() {
+        cout<<"This is C"<<endl;
+    };
+};
+
+class D: public B, public C{
+    public:
+    void func() {
+        cout<<"This is D"<<endl;
+    }
+};
+
+class E: public B, public C{
+    // E不给实现，就会导致二义性，编译器不知道该找哪个方法
+};
+
+class F: public B, public C{
+    public:
+    void func(){
+        C::func();
+    }
+};
+
+int main(){
+    
+    D d;
+    E e;
+    d.func();
+    // e.func(); // 二义性，无法编译 对比python，python是运行时报错，基于MRO。
+
+    // 方法2 作用域解析运算符
+    e.B::func();
+
+    // 方法3 重新定义函数
+    F f;
+    f.func();
+    
+}
+```
+
+题外话，对比python，python对于菱形继承，D继承自BC，而D没有给方法实现，第一python的多重继承和方法解析是在运行时进行，而不是在编译时。第二，python的MRO(Method Resolution Order)算法会根据MRO顺序来决定使用哪个方法，除非明确调用不存在的方法和属性。
+
+```python
+class A:
+  def func(self):
+    print("A")
+
+class B(A):
+  def func(self):
+    print("B")
+class C(A):
+  def func(self):
+    print("C")
+    
+class D(B,C):
+	pass
+
+d = D()
+d.func() # 输出B
+
+print(D.mro())
+
+```
+
+
+
+3.2 Virtual Inheritance
+
+3.3 Class Templates
+
 ## 4 Non-linear Solvers
+
 **Basic Knowledge:**
 
 BSM Formula:
 $$
-\begin{align*}
-&C(S_0, K, T,\sigma,r)=S_0N(d_+)-Ke^{-rT}N(d_-)\\
-&d_+=\frac{ln(\frac{S_0}{K})+(r+\frac{\sigma^2}{2})T}{\sigma\sqrt{T}}\\
-&d_-=d_+-\sigma\sqrt{T}\\
-&N(x)=\int_{-\infty}^x \frac{1}{\sqrt{2\pi}}e^{-\frac{y^2}{2}}dy
-\end{align*}
+C(S_0, K, T,\sigma,r)=S_0N(d_+)-Ke^{-rT}N(d_-)\\
+d_+=\frac{ln(\frac{S_0}{K})+(r+\frac{\sigma^2}{2})T}{\sigma\sqrt{T}}\\
+d_-=d_+-\sigma\sqrt{T}\\
+N(x)=\int_{-\infty}^x \frac{1}{\sqrt{2\pi}}e^{-\frac{y^2}{2}}dy
 $$
 If the values of S0, K, T, σ,r are all known, then we can calculate the price of option. Among these items, only σ is not known and needed to be estimated using the market option price.
 
@@ -93,22 +202,18 @@ If f(l) * f(mid) <0, root lies in [l, mid], mid ->r;
 
 If f(mid) == 0, mid is the root, Stop.
 
-And if \|mid - l \| <=  Accuracy requirement, stop. Input the mid and the corresponding f(mid)-c at that moment.
-
+And if |mid - l | <=  Accuracy requirement, stop. Input the mid and the corresponding f(mid)-c at that moment.
 
 
 **Newton-Raphson Method:**
 
 f is assumed to be differentiable on [a,b] and construct a sequence xn as follows:
 $$
-\begin{align*}
-&Take ~x0∈(a,b).\\
-&For~ n=0,1,2,..., let\\
-&x_{n+1}=x_n-\frac{f(x_n)-c}{f'(x_n)}
-\end{align*}
+Take ~x0∈(a,b).\\
+For~ n=0,1,2,..., let\\
+x_{n+1}=x_n-\frac{f(x_n)-c}{f'(x_n)}
 $$
 If the equation f(x)=c has a solution x∈(a,b) such that f'(x)≠0 and x0 is chosen close enough to x, then xn will converge to x.
-
 
 ### 4.1 使用Function Pointer的基本实现
 
@@ -181,7 +286,7 @@ int main(){
 
 ### 4.2 **使用Virtual Functions**: Enable dynamic binding
 
-Dynamic Binding :动态绑定是指在运行时根据实际对象的类型来确定要调用的函数实现，而不仅仅根据指针或引用的静态类型。这意味着，当通过基类的指针或引用调用虚函数时，实际调用的是对象的派生类中所重写的虚函数。这种动态绑定机制使得在继承体系中可以实现多态性，允许通过基类的接口来操作具体的派生类对象，而不需要显式指定对象的具体类型。
+Dynamic Binding :动态联编是指在运行时根据实际对象的类型来确定要调用的函数实现，而不仅仅根据指针或引用的静态类型。这意味着，当通过基类的指针或引用调用虚函数时，实际调用的是对象的派生类中所重写的虚函数。这种动态绑定机制使得在继承体系中可以实现多态性，允许通过基类的接口来操作具体的派生类对象，而不需要显式指定对象的具体类型。
 
 而如果在签名中声明为类对象本身而不是其指针，就会导致： <mark>虽然可以传入其子类，但是调用方法还是调用的同一个父类方法，而不会调用子类重写的方法。</mark>
 
@@ -385,6 +490,10 @@ double SolveByNR(Function *Fct, double Tgt, double guess, double acc)
 #endif
 ```
 
+此时这两个solver函数都是模板函数，即可以接收任意类型的Fct，编译器会在将来这个函数被调用时，根据调用的那句话中声明的typename的类型，来生成不同版本的函数，这样就避免了运行时开销。比如template<typename T> void print(T value){...}, 将来调用的时候，print<int>(42); print<double> (42.0); 就会生成不同版本的函数。
+
+编译器针对已知的类型，更好的进行优化；编译器更容易进行内联优化；没有虚函数的运行时开销；生成更好的分支预测代码。 
+
 ```c++
 #include "Solver03.h"
 #include <iostream>
@@ -428,19 +537,21 @@ int main()
 }
 ```
 
+
+
 同时，由于不再使用虚函数，SolveByBisect和SolveByNR的声明也不需要再使用Fct指针，使用Fct就可以了。
+
+
 
 ### 4.4 Computing Implied Volatility
 
 Define EurCall.h for computing the call option price using BSM using solver03.h, i.e. Templates version.
-Define EurCall.h for computing the call option price using BSM using solver03.h, i.e. Templates version.
 
 To compute it using Newton-Raphson method, we also need an expression for the derivative of the European call option price with respect to volatility σ calculated from BSM formula, **Vega**, is given by:
 $$
-\begin{align*}
-&v=\frac{1}{\sqrt{2\pi}}S_0e^{\frac{-d_+^2}{2}}
-\end{align*}
+v=\frac{1}{\sqrt{2\pi}}S_0e^{\frac{-d_+^2}{2}}
 $$
+
 
 ```c++
 #ifndef EurCall_h
@@ -613,6 +724,9 @@ int main(){
 ```
 
 
+
+
+
 # C++ Primer Plus
 
 ## Chapter 4. 复合类型
@@ -691,7 +805,7 @@ cout<<*(*pas)<<endl; // 第一次解引用获取一个数组的指针，对数�
 此外，sizeof(pointer)与sizeof(*sizeof)也是不同的。前者是查询储存该指针本身所需的字节长度，比如4字节或8字节。而后者是查询指针指向的数据类型的大小。
 
 
-# Comprehensive
+
 ###### keyword `static`
 
 在类定义中直接声明的变量通常是非静态成员变量。每个类的对象都有其自己的一份非静态成员变量的拷贝。相对的，静态成员变量是属于类本身的，不属于对象，所有该类的对象共享同一份静态成员变量。
@@ -722,6 +836,8 @@ func(nonConstVar); // valid
 ```
 
 
+
+# My Notes
 
 ###### keyword const
 
@@ -865,3 +981,176 @@ public:
 
 
 ###### Memory Pool
+
+
+
+# Effective C++
+
+## 06: Explicitly disallow the use of compiler-generated functions you do not want
+
+明确拒绝我们不想使用的编译器自动生成的函数
+
+不声明copy构造函数或copy assignment操作符，编译器可能会自动产出一份，于是class支持了copying。但是如果我们就是不希望class支持copying呢？
+
+关键在于：编译器自动产出的函数都是public的，因此一个解决方案是令这些函数为private，从而阻止外部的调用。
+
+这个方法不是绝对的安全，因为member函数和friend函数都可以调用private函数。
+
+可以声明一个基类来专门负责：
+
+```c++
+class Uncopyable {
+protected:
+    Uncopyale() {};  // 允许子类对象构造和析构
+    ~Uncopyable() {}; // 注意这里不一定得是virtual的，见条款07
+private:
+    Uncopyable(const Uncopyable&); // 阻止copy
+    Uncopyable& operator=(const Uncopyable&);
+}
+
+class HomeForSale: private Uncopyable { // private使得基类的public和protected成员在子类中变为私有成员
+    ... // class不需要再声明copy构造函数和copy赋值运算符为private
+}
+```
+
+> 你认为uncopyable这个基类的析构函数不需要是virtual的原因有哪些？
+>
+> ChatGPT
+>
+> 在此情况下，`Uncopyable`基类的析构函数不需要是`virtual`的，主要有以下几个原因：
+>
+> 1. **非多态基类**： `Uncopyable`的目的是为了禁止复制和赋值，而不是为了提供多态行为。通常，只有当基类打算被用作多态基类时，析构函数才需要是`virtual`的。
+> 2. **无需基类指针**： `Uncopyable`基类没有任何其他的成员函数，也不包含任何可重写的虚函数。因此，很少有情况需要通过指向`Uncopyable`的指针或引用来操作`HomeForSale`对象。无需通过基类指针删除派生类对象，所以不需要`virtual`析构函数。
+> 3. **无资源管理**： `Uncopyable`基类不包含任何资源（如动态分配的内存），也没有定义任何实际的析构逻辑。因此，即使析构函数不是`virtual`的，也不会出现资源泄露的问题。
+> 4. **减少虚表开销**： 为基类定义`virtual`析构函数会为该类添加一个虚表（vtable）。虚表是一个存储类的虚函数地址的表，它会增加每个对象的大小，并可能稍微降低性能。在这种情况下，由于`Uncopyable`的目的是为了提供禁止复制和赋值的能力，而不是为了提供多态行为，所以没有必要为它增加虚表的开销。
+>
+> 综上所述，`Uncopyable`基类的析构函数不需要是`virtual`的，因为它不是为了提供多态行为，而是为了禁止复制和赋值。
+
+BTW，about private继承所带来的：子类继承了基类的实现，但并不继承基类的接口，如何理解？<mark>子类内部可访问基类成员，但子类对象不能调用。</mark>
+
+```c++
+class Base {
+public:
+    void baseFunction() {
+        std::cout << "Base function called" << std::endl;
+    }
+};
+
+class Derived : private Base {
+public:
+    void derivedFunction() {
+        baseFunction();  // 正确：在Derived内部可以访问Base的成员
+    }
+};
+
+int main() {
+    Derived d;
+    d.derivedFunction();  // 输出：Base function called
+    // d.baseFunction();  // 错误：baseFunction在Derived中是私有的
+    return 0;
+}
+```
+
+如果一定想调用呢？通过创建一个新方法，或使用using声明：
+
+```c++
+class Base {
+public:
+    void baseFunction() {
+        std::cout << "Base function called" << std::endl;
+    }
+};
+
+class Derived : private Base {
+public:
+    using Base::baseFunction;  // 使用 using 声明使 baseFunction 在 Derived 类中可访问
+
+    void derivedFunction() {
+        baseFunction();  // 现在这是正确的
+    }
+};
+
+int main() {
+    Derived d;
+    d.derivedFunction();  // 输出：Base function called
+    d.baseFunction();  // 现在这也是正确的
+    return 0;
+}
+```
+
+
+
+
+
+## 07: Declare destructors virtual in polymorphic base classes
+
+polymorphic base classes should declare a virtual destructor. 并且如果class中带有任何virtual函数，那么它就应该拥有一个virtual析构函数；
+
+classes的设计目的如果不是作为base classes使用，或不是为了多态，就不该声明virtual函数
+
+比如有一个记录时间的基类TimeKeeper，可能会有多种子类，AtomicClock，WaterClock，WristClock。并设计了一个工厂函数提供一个计时对象，工厂函数会返回一个base class指针，指向derived class对象。
+
+```c++
+class TimeKeeper() {
+public:
+    TimeKeeper();
+    ~TimeKeeper(); // non-virtual
+};
+
+class AtomicClock: public TimeKeeper {...};
+class WaterClock: public TimeKeeper {...};
+class WristClock: public TimeKeeper {...};
+
+TimeKeeper* getTimeKeeper();
+
+// 为了遵守factory函数的规矩，被该函数返回的对象必须是在堆区。为了避免内存泄漏，需要delete
+...
+delete ptk;
+
+
+```
+
+条款13认为依赖于客户执行delete动作，本身就具有某种错误倾向；
+
+此处更严重的问题是，工厂函数返回的指针指向一个derived class对象比如AtomicClock对象，但是对象却经由一个base class指针比如TimeKeeper* 来删除，而当前基类的析构函数是non-virtual的。会导致：<mark>对象的derived成分没被销毁，子类的析构函数也未能被运行，导致诡异的局部销毁，从而造成资源泄露</mark>。因此修改：
+
+```c++
+class TimeKeeper() {
+public:
+    TimeKeeper();
+    virtual ~TimeKeeper(); //virtual
+};
+```
+
+此外，像TimeKeeper这样的基类一般还会有除了析构函数以外的其他virtual函数，比如`virtual getCurrentTime`，在不同的子类中应该有不同的实现。再次强调：任何class只要带有virtual函数几乎确定也应该有一个virtual destructor。如果不打算将其作为base class，一般不需要使用virtual。
+
+<u>即使class完全没有virtual函数，non-virtual析构函数有时候也会带来问题</u>：比如继承标准库的一些类如string，其析构函数是non-virtual的。
+
+```c++
+class SpecialString: puhblic std::string { // Really awful! }
+```
+
+假如程序无意中将一个pointer-to-SpecialString转换为pointer-to-string，并将转换所得的指针delete掉，就会导致行为不明确。
+
+```c++
+SpecialString* pss = new SpecialString("Impending Doom");
+std::string* ps;
+...
+ps = pss; // 向上转型
+...
+delete ps; // 未定义！SpecialString的析构函数没有被调用
+```
+
+C++并没有像java一样的final关键字来禁止派生
+
+<mark>关于pure virtual析构函数，必须为其提供定义</mark>。这个会在一些场景下提供一些便利，但是pure virtual会导致类变成抽象基类，无法实例化。析构函数的运作顺序：从most derived的类开始被调用，然后依次到最顶上的base class的析构函数。因此，编译器会在AWOV的derived classes的析构函数中创建一个对~AWOV的调用动作，因此必须提供一个定义。否则导致链接错误。
+
+```c++
+class AWOV {
+public:
+    virtual ~AWOV() = 0;  // 纯虚析构函数
+};
+
+AWOV::~AWOV() {}  // 纯虚析构函数的定义
+```
+
