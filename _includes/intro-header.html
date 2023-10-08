@@ -2,6 +2,10 @@
     @param {string} type - 'page' | 'post' | 'keynote'
     @param {boolean} short
 {% endcomment %}
+{% capture words %}
+{{content | number_of_words}}
+{% endcapture %}
+
 
 {% if include.type == 'post' or include.type == 'page' %}
 <style type="text/css">
@@ -45,8 +49,33 @@
                     </div>
                     <h1>{{ page.title }}</h1>
                     {% comment %} always create a h2 for keeping the margin {% endcomment %}
-                    <h2 class="subheading">{{ page.subtitle }}</h2>
-                    <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} on {{ page.date | date: "%B %-d, %Y" }}</span>
+                    <h3 class="subheading">{{ page.subtitle }}</h3>
+                    <style>
+                        .readingTime {
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        }
+                        .meta {
+                            display: flex;
+                            align-items: center;
+                        }
+                    </style>
+                    <div class="readingTime">
+                        
+                        <div class="meta">
+                            ⏱️ Words: {{words}} | Reading Time: {{words | divided_by:180 | append:'min'}}
+                        </div>
+                        <div class="meta">
+                            Posted on {{ page.date | date: "%B %-d, %Y" }}
+                        </div>
+                    </div>
+                    
+                    
+                    
+                    <!-- <span class="meta"></span>  -->
+                <!-- </span>
+                <span class="meta">Posted by {% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} on {{ page.date | date: "%B %-d, %Y" }}</span> -->
                 </div>
             </div>
         </div>

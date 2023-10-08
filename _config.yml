@@ -126,3 +126,11 @@ markdown: kramdown
 #   toc_auto_insert: true
 
 
+# plugins:
+#   - jekyll-reading-time
+
+reading_time:
+  second_plural: "sec"
+  minute_sigular: "min"
+  minute_plural: "min"
+  words_per_minute: 180
