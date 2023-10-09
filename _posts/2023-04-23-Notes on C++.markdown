@@ -839,7 +839,7 @@ func(nonConstVar); // valid
 
 # My Notes
 
-###### keyword const
+#### keyword const
 
 1）创建变量时修饰： const Example obj；
 
@@ -857,7 +857,7 @@ func(nonConstVar); // valid
 
 
 
-###### Member Initialization List 成员初始化列表
+#### Member Initialization List 成员初始化列表
 
 不可用于static变量
 
@@ -895,17 +895,17 @@ func(nonConstVar); // valid
 
 
 
-###### keyword assert
+#### keyword assert
 
 用于开发阶段的调试。
 
-###### keyword noexcept
+#### keyword noexcept
 
 加上noexcept的函数将承诺不会抛出异常。如果真的存在异常，将会导致整个程序停止。主要是为了告诉编译器，使编译器进行优化，让编译器知道这里绝不会抛异常，不必多生成保护栈上对象安全析构的代码。
 
-###### =default
+#### =default
 
-###### using与typedef的区别
+#### using与typedef的区别
 
 using支持模板别名，而typedef不可
 
@@ -961,6 +961,8 @@ MethodPtr ptr = &MyClass::myMethod;
 
 ```
 
+BTW: 关于函数名的理解：函数名本质上是一个指向函数地址的指针。正因为如此可以直接将函数名赋值给一个函数指针，如：void (*funcPtr)() = myFunction; funcPtr(); 当然，也可以通过对&myFunction明确的取地址。
+
 Using可以用来引入基类的名称，从而实现函数重载，否则同名不同参的函数在子类中，基类函数会被隐藏，强行调用（如传入基类函数声明的参数类型，会报错）
 
 ```c++
@@ -980,13 +982,180 @@ public:
 
 
 
-###### Memory Pool
+### ⭐Memory Pool
+
+https://github.com/cacay/MemoryPool/tree/master
+
+结构：
+
+使用模板类，接受两个模板参数：元素类型T和块大小BlockSize
+
+.h file:
+
+```c++
+#ifndef MEMORY_POOL_H
+#define MEMORY_POOL_H
+
+#include <climits>
+#include <cstddef>
+
+template <typename T, size_t BlockSize = 4096>
+class MemoryPool
+{
+  public:
+    /* Member types */
+    typedef T               value_type;
+    typedef T*              pointer;
+    typedef T&              reference;
+    typedef const T*        const_pointer;
+    typedef const T&        const_reference;
+    typedef size_t          size_type;
+    typedef ptrdiff_t       difference_type;
+    typedef std::false_type propagate_on_container_copy_assignment;
+    typedef std::true_type  propagate_on_container_move_assignment;
+    typedef std::true_type  propagate_on_container_swap;
+
+    template <typename U> struct rebind {
+      typedef MemoryPool<U> other;
+    };
+
+    /* Member functions */
+    MemoryPool() noexcept;
+    MemoryPool(const MemoryPool& memoryPool) noexcept;
+    MemoryPool(MemoryPool&& memoryPool) noexcept;
+    template <class U> MemoryPool(const MemoryPool<U>& memoryPool) noexcept;
+
+    ~MemoryPool() noexcept;
+
+    MemoryPool& operator=(const MemoryPool& memoryPool) = delete;
+    MemoryPool& operator=(MemoryPool&& memoryPool) noexcept;
+
+    pointer address(reference x) const noexcept;
+    const_pointer address(const_reference x) const noexcept;
+
+    // Can only allocate one object at a time. n and hint are ignored
+    pointer allocate(size_type n = 1, const_pointer hint = 0);
+    void deallocate(pointer p, size_type n = 1);
+
+    size_type max_size() const noexcept;
+
+    template <class U, class... Args> void construct(U* p, Args&&... args);
+    template <class U> void destroy(U* p);
+
+    template <class... Args> pointer newElement(Args&&... args);
+    void deleteElement(pointer p);
+
+  private:
+    union Slot_ {
+      value_type element;
+      Slot_* next;
+    };
+
+    typedef char* data_pointer_;
+    typedef Slot_ slot_type_;
+    typedef Slot_* slot_pointer_;
+
+    slot_pointer_ currentBlock_;
+    slot_pointer_ currentSlot_;
+    slot_pointer_ lastSlot_;
+    slot_pointer_ freeSlots_;
+
+    size_type padPointer(data_pointer_ p, size_type align) const noexcept;
+    void allocateBlock();
+
+    static_assert(BlockSize >= 2 * sizeof(slot_type_), "BlockSize too small.");
+};
+
+#include "MemoryPool.tcc"
+
+#endif // MEMORY_POOL_H
+```
+
+#### 子类对父类构造函数的调用方式
+
+```c++
+// Method1: 构造函数初始化列表
+class Base {
+    public:
+        Base(int a) {}
+};
+
+class Derived : public Base {
+    public:
+        Derived(int a) : Base(a) {}  // 调用父类的构造函数
+};
+
+// Method2：默认构造，即隐式地调用
+class Base {
+    public:
+        Base() {}  // 默认构造函数
+};
+
+class Derived : public Base {
+    public:
+        Derived(int a) {}  // 隐式调用父类的默认构造函数
+};
+
+// Method3: using
+// C++11引入了一个新特性，允许子类通过using声明继承父类的构造函数。这样，子类可以直接使用父类的构造函数，而不需要在子类中重新定义它们。
+class Base {
+    public:
+        Base(int a) {}
+        Base(int a, int b) {}
+};
+
+class Derived : public Base {
+    public:
+        using Base::Base;  // 继承父类的所有构造函数
+};
+
+```
 
 
 
-# Effective C++
+# <mark>Effective C++</mark>
 
-## 06: Explicitly disallow the use of compiler-generated functions you do not want
+### 04 Make sure that objects are intialized before they're used
+
+
+
+## Chapter 2: Construtors, Destructors, and Assignment Operators
+
+### 05: Know what functions C++ silently writes and calls
+
+如果开发者自己没有声明，编译器会自动声明：copy构造函数，default构造函数（当没有任何构造函数时），copy assignment操作符，析构函数。其中析构函数是non-virtual的，除非该类包含其他的virtual函数。所有这些函数都是public且inline的。
+
+其中copy构造函数和copy assign操作符的默认功能是，将来源对象的每一个non-static成员变量拷贝到目标对象。
+
+如果一个类的成员里包含reference成员，那么C++将拒绝为该类生成copy assignment操作符。第一是本身C++具有引用不可变性，引用的指向不可变，因此copy赋值过程中，该reference成员首先不会改指向实参对象中的那个reference成员。第二，那就只能是修改指向的值了，但这会进一步影响持有该成员的引用的其他对象，所以这个copy assign行为必须由开发者自己定义。
+
+```c++
+template<class T>
+class NamedObject {
+public:
+    NamedObject(std::string& name, const T& value);
+    ...
+private:
+    std::string& nameValue;
+    const T objectValue;
+};
+
+
+std::string newDog("A");
+std::string oldDog("B");
+NamedObject<int> p(newDog, 2);
+NamedObject<int> s(oldDog, 36);
+
+p=s; // what would happen?
+```
+
+面对包含const成员的类，编译器也是一样，由于更改const成员是不合法的，因此编译器不知道如何处理赋值函数。
+
+此外，如果基类将copy assignment操作符声明为private，则编译器将不会给子类生成copy assign操作符。因为原本子类的copy assignment操作符应该能够处理base class的成分。
+
+
+
+### 06: Explicitly disallow the use of compiler-generated functions you do not want
 
 明确拒绝我们不想使用的编译器自动生成的函数
 
@@ -1082,7 +1251,7 @@ int main() {
 
 
 
-## 07: Declare destructors virtual in polymorphic base classes
+### 07: Declare destructors virtual in polymorphic base classes
 
 polymorphic base classes should declare a virtual destructor. 并且如果class中带有任何virtual函数，那么它就应该拥有一个virtual析构函数；
 
@@ -1154,3 +1323,326 @@ public:
 AWOV::~AWOV() {}  // 纯虚析构函数的定义
 ```
 
+
+
+## 4 Designs and Declarations 设计与声明
+
+### 18: Make interfaces easy to use correctly and hard to use incorrectly
+
+开发一个接口，首先需要考虑client可能做出什么样的错误。
+
+诸如：
+
+```c++
+class Date{
+public:
+    Date(int month, int day, int year);
+};
+
+Date(3,30,1995); // True
+Date(30,3,1995); // False
+```
+
+针对这种不值得拥有的代码的问题上，我们需要Type System来协助。导入简单的wrapper types来区分天数、月份和年份：
+
+```c++
+#include <iostream>
+#include <iomanip>
+
+struct Day
+{
+    explicit Day(int d) : val(d)
+    {
+    }
+
+    int val;
+};
+
+struct Month
+{
+    explicit Month(int m) : val(m)
+    {
+    }
+
+    int val;
+};
+
+struct Year
+{
+    explicit Year(int y) : val(y)
+    {
+    }
+
+    int val;
+};
+
+class Date
+{
+private:
+    Month month;
+    Day day;
+    Year year;
+
+public:
+    Date(const Month &m, const Day &d, const Year &y) : month(m), day(d), year(y){};
+	
+    // 一般重载运算符作为类的非成员变量通过friend关键字来获取访问类的私有成员的权限
+    friend std::ostream &operator<<(std::ostream& os, const Date &date);
+};
+
+std::ostream &operator<<(std::ostream& os, const Date &date)
+{
+    // 如果date.month这里不加.month是不行的，除非struct Month内部声明了Month是如何<<的
+    os << std::setw(2) << std::setfill('0') << date.month << '/'
+       << std::setw(2) << std::setfill('0') << date.day.val << '/'
+       << date.year.val;
+
+    return os;
+}
+
+int main(){
+    Date d(30, 3, 1995); // Wrong
+	Date d(Day(30), Month(3), Year(1995)); // Wrong
+    Date d(Month(3), Day(30), Year(1995)); // Right
+}
+
+```
+
+此时，类型安全了，但是还需要限制其值，比如月份不能有13月：
+
+```c++
+class Month {
+public:
+    static Month Jan(){
+        return Month(1);
+    };
+    ...
+
+    friend std::ostream& operator<<(std::ostream& os, const Month &month);
+    
+private:
+    // 也就是说不允许手动构造Month对象，而要通过类的静态方法来构造。
+    explicit Month (int m):month(m){};
+    int month;
+};
+
+std::ostream& operator<<(std::ostream& os, const Month &month){
+    os<< month.month;
+    return os;
+}
+
+int main(){
+     Date d(Month::Jan(), Day(5), Year(1995));
+}
+```
+
+任何接口如果要求客户必须记得做哪些事情，就有着不正确使用的倾向，因为客户可能会忘记。比如Rule 13的factory函数返回一个指向Investment继承体系内的动态分配对象：
+
+```c++
+Investment* createInvestment();
+```
+
+为避免资源泄露，该指针最终必须被删除，这一逻辑导致了潜在的两个问题：
+
+1）client忘记delete 2）delete了两次
+
+因此，rule 13的做法是将返回值存储于一个智能指针内，auto_ptr or tr1::shared_ptr。
+
+又有了新问题：如果client忘记将指针包装成智能指针？优秀的做法是：先发制人，令该工厂函数直接返回一个智能指针：
+
+```c++
+std::tr1::shared_ptr(Investment) createInvestment();
+```
+
+shared_ptr允许智能指针创建时，我们指定一个自定义的资源释放函数，deleter删除器。auto_ptr是不行的。如：
+
+```c++
+std::tr1::shared_ptr<Investment> createInvestment(){
+	std::tr1::shared_ptr<Investment> retVal(
+        // 想创建一个null shared_ptr，而0是一个int，虽然其可以被转换为指针 但为shared_ptr的构造器要求第一参数是一个真正的指针
+        static_cast<Investment* >(0), getRidOfInvestment);
+    retVal = ...;
+    return retVal;
+}
+   
+```
+
+注：如果业务逻辑上原始指针能够先于智能指针创建，直接将原始指针交给智能指针要比先把智能指针初始化再赋值要好，原因见rule 26。
+
+还有一个优势是 解决了cross-dll problem 不懂。可被用来解除互斥锁 见rule 14
+
+但是智能指针往往开销要高于原始指针，如：
+
+1）更大的内存开销：引用计数和自定义删除器
+
+2）运行时开销：拷贝和赋值发生时，引用计数更新
+
+
+
+### 19：Treat class design as type design
+
+设计class犹如设计type，需要考虑的问题：
+
+- 新type的对象如何被创建和销毁？构造器、析构函数、内存分配函数、释放函数(operator new, operator new[], operator delete, operator delete[])
+
+- 对象的初始化和赋值应该有什么差别？初始化和赋值的区别？Rule 4
+
+- 如果对象以值传递意味着什么？copy构造函数用来定义pass by value如何实现
+
+- 什么是新type的合法值？约束是什么，错误检查，异常抛出
+
+- 需要配合某个继承图系吗inheritance graph。如是，则将受到既有class设计的束缚，特别是virtual和non-virtua的问题（Rule34&36）
+
+- 新type需要什么样的转换？是否允许T1类型被隐式转换为T2，则T1内部需要operator T2。如果只允许explicit构造函数存在，则得写出专门负责执行的函数，且不得为type conversion operators 或 non-explicit-one-argument构造函数。（见rule 15的隐式和显示转换示例）
+
+  ```c++
+  // type conversion operators
+  class T1 {
+  public:
+      operator T2() const {
+          // ...转换逻辑...
+          return T2_converted_value;
+      }
+  };
+  
+  class T2 {
+      // ...
+  };
+  
+  int main() {
+      T1 obj1;
+      T2 obj2 = obj1;  // 隐式转换
+  }
+  
+  
+  // non-explicit-one-argument constructor
+  // 注意，单参构造函数与copy构造函数很像，但有区别。单参重在从另一类型对象创建本类的新对象，进行类型转换操作。而copy构造函数是从同类的另一对象创建新对象。
+  class T2 {
+  public:
+      T2(const T1& obj) {
+          // ...转换逻辑...
+      }
+      // ...
+  };
+  
+  int main() {
+      T1 obj1;
+      T2 obj2 = obj1;  // 隐式转换
+  }
+  
+  // explicit显式转换，不允许隐式转换
+  class T2 {
+  public:
+      explicit T2(const T1& obj) {
+          // ...转换逻辑...
+      }
+      // ...
+  };
+  
+  int main() {
+      T1 obj1;
+      T2 obj2 = obj1;  // 错误：不允许隐式转换
+      T2 obj3(obj1);   // 正确：显式转换
+  }
+  
+  ```
+
+- 什么样的操作符和函数是合理的？（Rule 23，24，46）
+
+- 什么样的标准函数应该驳回？private ，Rule 6
+
+- 谁该取用新type的成员？成员public、protected or private？哪个类和函数应该是friend？
+
+- 什么是新type的undeclared interface?对效率、异常安全（Rule29）和资源运用如多任务锁定和动态内存有何保证？
+
+- 该type有多一般化？究竟是一个独特的class，还是一个class家族，是否需要使用class template
+
+- 是否真的需要一个新type？是否能通过继承添加新功能就能满足需求？
+
+
+
+### 20 Prefer pass-by-reference-to-const to pass-by value
+
+以const引用传递替代值传递
+
+缺省情况下C++以by value方式传递对象至函数。即：函数参数是以实参的副本为初值，而调用端获得的也是函数返回值的一个副本。
+
+假如Person类具有两个String成员，Student类继承自Person类。student对象以值传递方式给函数validteStudent。总共的操作：copy构造student，copy构造student内部的两个string，copy构造person对象，copy构造person内部的两个string。再同样地进行析构。6次构造6次析构。
+
+同时，引用传递还可以避免slicing对象切割的问题。
+
+对象切割：
+
+> 在C++中，当你将一个对象以值传递给一个函数时，会发生对象的切割（object slicing）。对象切割是指只有基类部分的数据被复制和传递给函数，而派生类特有的数据则被切割掉。这是因为目标类型（在本例中是基类）只有足够的空间来存储基类的数据，没有额外的空间来存储派生类特有的数据。
+
+```c++
+#include <iostream>
+
+class Base {
+public:
+    virtual void A() const {
+        std::cout << "Base::A" << std::endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    void A() const override {
+        std::cout << "Derived::A" << std::endl;
+    }
+};
+
+void callA(Base obj) {
+    obj.A();
+}
+
+int main() {
+    Derived d;
+    callA(d);  // Output: Base::A
+    return 0;
+}
+```
+
+> 在这个例子中，函数`callA`接受一个`Base`类型的对象作为参数。当我们尝试将一个`Derived`对象传递给`callA`时，`Derived`对象被切割为`Base`对象，只有基类部分的数据被传递给`callA`函数。因此，当在`callA`函数中调用`A`方法时，`Base`类版本的`A`方法被调用，而不是`Derived`类版本的`A`方法。
+>
+> 为了避免对象切割并保留多态行为，你应该使用指针或引用传递对象，而不是值传递。
+>
+> 
+>
+> **如果callA的形参是引用传递，但是基类A函数没加virtual，会发生什么**
+>
+> 如果`callA`的形参是通过引用传递，但基类的`A`函数没有被声明为`virtual`，那么将发生静态绑定（static binding），而不是动态绑定（dynamic binding）。这意味着在编译时会确定要调用的函数版本，而不是在运行时。
+>
+> 在这种情况下，即使你传递一个派生类对象给`callA`函数，也会调用基类版本的`A`函数，而不是派生类版本的`A`函数。下面是一个例子来说明这种情况：
+
+```c++
+#include <iostream>
+
+class Base {
+public:
+    void A() const {  // 注意: 这里没有使用 virtual 关键字
+        std::cout << "Base::A" << std::endl;
+    }
+};
+
+class Derived : public Base {
+public:
+    void A() const {
+        std::cout << "Derived::A" << std::endl;
+    }
+};
+
+void callA(Base& obj) {  // 使用引用传递
+    obj.A();
+}
+
+int main() {
+    Derived d;
+    callA(d);  // Output: Base::A
+    return 0;
+}
+```
+
+
+
+但对于，内置类型、STL迭代器和函数对象，pass-by-value可以接受。
