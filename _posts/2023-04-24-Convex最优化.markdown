@@ -71,7 +71,7 @@ y=θx1+（1-θ）x2=x2+θ（x1-x2）
 
 <u>直线是仿射集，而线段不是仿射集（因为线段上选的点连成的直线超出线段了）</u>
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008205402269.png" alt="image-20231008205402269" style="zoom: 33%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008205402269.png?raw=true" alt="image-20231008205402269" style="zoom: 33%;" />
 
 正方形区域就不是一个仿射集。
 
@@ -93,7 +93,7 @@ $$
 
 若C是仿射集，对于$\alpha X_1+\beta X2 \stackrel{?}{\in} C, \alpha,\beta \in R$, 当然就不一定了，因为没有了和=1的约束。但是是否有特殊的一些情况使得对这种一般的情形也满足？
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008211018942.png" alt="image-20231008211018942" style="zoom:33%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008211018942.png?raw=true" alt="image-20231008211018942" style="zoom:33%;" />
 
 平移直线， 当该直线经过原点时，不论何种α与β，仿射组合都会在该直线上
 若集合C是仿射集，则构造 $V=C-X_o=\{X-X_0~|~X\in C\}_{\forall X_0\in C}$ ,称 V是C相关的子空间。
@@ -138,11 +138,11 @@ $$
 任意集合C，如何构造尽可能小的仿射集？在某集合之上构建的最小的仿射集
 引入仿射包，仿射包依然是一个集合，记作 $ aff~~C=\{\theta_1 x_1+...+\theta_kx_k~|~\forall x_1...x_k\in C,~\forall \theta_1+...\theta_k=1\}$
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008225614529.png" alt="image-20231008225614529" style="zoom:33%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008225614529.png?raw=true" alt="image-20231008225614529" style="zoom:33%;" />
 
 如图，有二维平面，有集合{x1,x2}，显然不是仿射集。但是这条直线是该集合的仿射包。而仿射包一定是个仿射集。
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008225817264.png" alt="image-20231008225817264" style="zoom:33%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008225817264.png?raw=true" alt="image-20231008225817264" style="zoom:33%;" />
 
 当该集合有三个点的时候，则该集合的仿射包拓展到了整个平面。
 
@@ -171,36 +171,34 @@ $\theta x_1+(1-\theta)x_2\in C$
 
 
 凸包：考虑任何n维空间的集合C，满足上述三个条件的任意的组合构成的集合。是在该集合基础上最小的凸集。
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008231526955.png?raw=trueng" alt="image-20231008231550566" style="zoom: 50%;" />
 
-![image-20231008231526955](D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008231526955.png)
 
 这些图形是否为凸集：是，不是，不是
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008231550566.png" alt="image-20231008231550566" style="zoom: 50%;" />
-
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008231550566.png?raw=true" alt="image-20231008231958189" style="zoom: 50%;" />
 是
 
 它们的凸包：
-
-![image-20231008231903506](D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008231903506.png)
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008231903506.png?raw=true" style="zoom: 50%;" />
 
 对于离散的集合，尽管很难是凸集，但是可以构造出来最小的凸集：凸包
-
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008231958189.png" alt="image-20231008231958189" style="zoom: 50%;" />
-
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008231958189.png?raw=true" style="zoom: 50%;" />
 
 
-锥：Cone  凸锥 Convex Cone
+
+
+**锥：Cone  凸锥 Convex Cone**
 
 C是锥，等价于对任意x属于C，θ≥0，有θx∈C
 
 C是凸锥，等价于对任意x1，x2属于C，θ1，θ2≥0，有x1θ1+x2θ2∈C
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008232322650.png" alt="image-20231008232322650" style="zoom:50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008232322650.png?raw=true" alt="image-20231008232322650" style="zoom:50%;" />
 
 从原点出发三条射线。三条射线所构成的集合是一个锥。
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008232510659.png" alt="image-20231008232510659" style="zoom: 33%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008232510659.png?raw=true" alt="image-20231008232510659" style="zoom: 33%;" />
 
 Y字形不是一个锥，右图是一个锥，也是一个凸锥，是一个凸集。
 
@@ -212,17 +210,16 @@ $\theta_1 x_1+...+\theta_k x_k,~~\theta_1...\theta_k\ge0$
 凸锥包： 
 $ x1,...,x_k \in C,~~\{\theta_1 x_1+...+\theta_k~|~x_1...x_k\in C, ~\theta_1...\theta_k\ge0\} $
 
-![image-20231008233109026](D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008233109026.png)
-
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008233109026.png?raw=true" alt="image-20231008231958189" style="zoom: 50%;" />
 两种情况的凸锥包
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\image-20231008233242114.png" alt="image-20231008233242114" style="zoom:50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/convex/image-20231008233242114.png?raw=true" alt="image-20231008233242114" style="zoom:50%;" />
 
 过原点的直线是凸锥，但不是最小的凸锥包
 
 
 
-Summary and Comparison:
+**Summary and Comparison:**
 $$
 \begin{align*}
 &仿射组合~~~~~\forall \theta_1...\theta_k,~~~~~\theta1+...+\theta_k=1\\
