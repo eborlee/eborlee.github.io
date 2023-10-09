@@ -2,7 +2,7 @@
 layout:     post
 title:      "Notes - C++ Learning | C++学习笔记"
 subtitle:   " \"C++ Primer Plus / Effective C++ / Numerical Methods / My Notes...\""
-date:       2023-09-01 12:00:00
+date:       2023-09-09 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
 multilingual: false
