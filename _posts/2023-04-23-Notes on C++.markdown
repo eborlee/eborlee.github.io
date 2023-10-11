@@ -1111,11 +1111,140 @@ class Derived : public Base {
 
 ```
 
+#### 隐藏构造函数而提供static create的用途
+
+> 使用静态方法`create`来创建类对象，而不直接让用户调用构造函数的设计，通常有以下几个目的：
+>
+> 1. **控制对象的创建**: 通过`create`方法，你可以更好地控制对象的创建过程。例如，你可以在创建对象前后添加额外的逻辑，如参数检查、日志记录或资源分配等。
+>
+> 2. **返回子类实例**: 如果你的类是一个基类，并且你想在运行时根据某些条件返回不同的子类实例，`create`方法可以实现这一目的。用户不需要知道具体的子类类型，只需知道基类类型。
+>
+> 3. **单例模式**: 如果你想要在程序中创建一个特定类的单一实例，`create`方法可以帮助实现单例模式。它可以保持对该实例的引用，并在需要时返回现有实例，而不是创建新实例。
+>
+> 4. **对象池**: `create`方法可以用于实现对象池，以重用已经创建的对象而不是每次都创建新对象，从而提高性能。
+>
+> 5. **隐藏构造函数**: `create`方法可以隐藏构造函数的具体实现，使得构造函数可以被保护或私有化，这样用户就不能直接创建对象，必须通过`create`方法来创建。
+>
+> 6. **错误处理**: 通过`create`方法，你可以更容易地处理错误。例如，如果对象创建失败，`create`方法可以返回`null`或抛出异常，而构造函数则不能返回`null`。
+>
+> 7. **返回智能指针**: `create`方法可以返回一个智能指针，如`std::shared_ptr`或`std::unique_ptr`，从而确保对象的生命周期得到正确管理。
+>
+> 这种设计模式可以使类的设计更为灵活，有助于实现代码的解耦和复用。同时，它还可以让类的用户更容易理解和使用该类，降低错误的可能性。
+
+#### Dynamic Type Checking
+
+`dynamic_cast`是C++中的一个类型转换运算符，它在运行时检查对象的类型。`dynamic_cast`主要用于处理类之间的继承关系。
+
+表达式`dynamic_cast<Derived*>(basePtr)`尝试将`basePtr`（一个指向基类对象的指针）转换为指向派生类对象的指针。结果可以是两种情况之一：
+
+1. **成功转换**：
+   - 如果`basePtr`实际上指向的是一个`Derived`类型的对象，`dynamic_cast`将成功，并返回一个有效的指向`Derived`类型对象的指针。
+2. **转换失败**：
+   - 如果`basePtr`不是指向一个`Derived`类型的对象，`dynamic_cast`将失败，并返回`nullptr`。
+
+```c++
+Base* basePtr = &d;
+Derived* derivedPtr = dynamic_cast<Derived*>(basePtr);  // 动态类型检查
+if (derivedPtr) {
+    // basePtr 实际上是指向 Derived 类型的对象
+} else {
+    // basePtr 不是指向 Derived 类型的对象
+}
+```
+
+#### Constructors
+
+Conversion Constructor
+
+只是是一个参数的构造函数就是转换构造函数，就支持这种隐式转换
+
+```c++
+class Example {
+public:
+    int value;
+    Example(int val) : value(val) {}  // 转换构造函数
+};
+Example ex = 42;  // 隐式转换 int 到 Example
+Example ex = Example(42);  // 相当于显示调用构造函数
+
+```
+
+如果想避免这种隐式转换带来的隐患，则需要explicit关键字
+
+```c++
+class Example {
+public:
+    int value;
+    explicit Example(int val) : value(val) {}  // 现在，这个构造函数不允许隐式转换
+};
+Example ex = Example(42);  // 正确
+// Example ex = 42;  // 错误，因为不允许隐式转换
+
+```
+
+Move Constructor
+
+重点是构造器形参中的右值引用。如下是一种移动语义的写法。另一种是std::move
+
+```c++
+class Example {
+public:
+    int* value;
+    Example(Example&& other) noexcept : value(other.value) {
+        other.value = nullptr;
+    }
+};
+
+class DBConn {
+public:
+    DBConn(DBConnection&& dbConnection) noexcept : db(std::move(dbConnection)), closed(false) {}
+    // ... 其他成员函数和数据成员
+
+private:
+    DBConnection db;
+    bool closed;
+};
+
+```
+
+Copy Constructor
+
+重点是同类对象的引用作为形参。这与conversion operator有区别。那个是不同类的隐式转换。
+
+```c++
+class Example {
+public:
+    int value;
+    Example(const Example& other) : value(other.value) {}
+};
+
+```
+
+#### Return by value + 赋值的运行逻辑
+
+> 在C++中，当函数通过值返回对象时，通常会涉及到对象的拷贝或移动。在你提供的代码 `myClass mc = func();` 中，`func` 函数返回一个`myClass`类型的对象，然后该对象被赋值给外部变量 `mc`。下面是这个过程的详细解释：
+>
+> 1. **函数内部对象的生命周期**：
+>    - 在`func`函数内部，会创建一个`myClass`类型的临时对象。这个对象的生命周期仅在`func`函数的执行期间存在。一旦`func`函数返回，这个临时对象就会超出其生命周期。
+>
+> 2. **返回过程**：
+>    - 在`func`函数返回时，原始的临时对象会被复制或移动到一个新的临时对象中。通常，编译器会尝试使用移动构造函数（如果可用）而不是拷贝构造函数，以避免不必要的对象复制。这个优化通常被称为返回值优化（RVO）或命名返回值优化（NRVO）。
+>
+> 3. **赋值过程**：
+>    - 新的临时对象然后被赋值给`mc`变量。如果`mc`变量已经存在，会调用拷贝赋值运算符或移动赋值运算符（取决于临时对象是否可以被移动）。如果`mc`变量是新创建的，那么会调用拷贝构造函数或移动构造函数。
+>
+> 4. **外部变量的生命周期**：
+>    - 一旦临时对象被赋值给`mc`变量，临时对象的生命周期就结束了，它会被销毁。`mc`变量的生命周期从它被创建的时刻开始，直到它超出作用域或被销毁时结束。
+>
+> 总的来说，`func`内部的原始对象和外部的`mc`变量是两个完全独立的对象，它们有各自的生命周期。在`func`函数返回并赋值给`mc`变量的过程中，可能会发生对象的拷贝或移动操作。
+
+
+
 
 
 # <mark>Effective C++</mark>
 
-### 04 Make sure that objects are intialized before they're used
+### 04 Make sure that objects are initialized before they're used
 
 
 
@@ -1323,6 +1452,237 @@ public:
 AWOV::~AWOV() {}  // 纯虚析构函数的定义
 ```
 
+### 08: Prevent exceptions from leaving destructors
+
+C++不禁止析构函数吐出异常，但不建议这样做。比如一个容器装了多个对象，容器销毁时试图销毁对象们，但是对象们的析构吐出异常，多个异常导致不明确的行为。
+
+假设有一数据库连接类，其中有一个方法void close(); 以便断开连接。为了避免客户忘记调用close方法，常用的做法是再写一个DBconn类来管理DBconnection对象。在DBconn的析构中调用DBconnection对象db的close方法。
+
+```c++
+DBconn dbc(DBconnection::create());
+```
+
+但是假如析构中报错，就会造成问题。有两个简单的应对方案：
+
+1）如果close异常，就abort结束程序：
+
+```c++
+DBConn::~DBconn(){
+	try{
+		db.close();
+	}catch(..){
+		std::abort();
+	}
+}
+```
+
+2）吞下异常
+
+```c++
+DBConn::~DBConn(){
+	try{
+		db.close();
+	}catch(...){
+		// 不处理，只是比如记录错误日志
+	}
+}
+```
+
+两者都无法对close导致异常作出反应，更好的策略是重新设计DBConn接口：
+
+```c++
+class DBConn{
+public:
+	void close(){ // 供client使用的新函数
+		db.close();
+		closed=True;
+	}
+	~DBConn(){
+		if(!closed){
+			try{
+				db.close();
+			}catch(...){
+				// 记录日志，abort之类的
+			}
+		}
+	}
+private:
+	DBConnection db; // 另外，我觉得这里，如果没有给移动构造函数的话，将会导致db在内存中有两个，造成资源浪费
+	bool closed;
+};
+```
+
+如：
+
+```c++
+class DBConn {
+public:
+    // 移动构造函数
+    DBConn(DBConnection&& dbConnection) noexcept : db(std::move(dbConnection)), closed(false) {}
+    // ... 其他成员函数和数据成员
+
+private:
+    DBConnection db;
+    bool closed;
+};
+
+```
+
+总结：
+
+析构函数不应抛出异常。如果client需要对某个操作函数运行期间抛出的异常做出反应，class应该提供一个普通函数而非在析构函数中执行该操作。
+
+### 09: Never call virtual functions during construction or destruction
+
+绝不在构造和析构过程中调用virtual函数。
+
+假如有如下类：
+
+```c++
+class Transaction{
+public:
+	Transaction();
+	virtual void log() const =0;
+	...
+};
+
+Transaction::Transaction(){
+	...
+	log(); // 基类的构造函数中的最后调用记录日志
+}
+
+class BuyTransaction: public Transaction{
+public:
+	virtual void log() const;
+}
+
+int main(){
+	BuyTransaction b;
+}
+```
+
+此时，这段代码会导致致命的不明确行为的问题：
+
+<u>由于C++构造函数的调用顺序是，先调用基类的构造函数，再是子类。此时，基类构造函数所调用的log，实际上不是子类的版本，而是基类自己的。可以这么说：基类构造期间，virtual函数不是virtual的</u>。
+
+这个现象的原因是：<mark>基类构造过程中，此时子类的成员变量尚未初始化</mark>。如果此时调用的virtual函数下降至子类的版本，而子类版本的函数往往用的都是local成员变量，而这些成员变量还没有初始化。这就导致了未定义的行为。所以C++不允许这么搞。
+
+更根本的原因是，<mark>子类对象的基类构造期间，对象的类型是基类！</mark>virtual函数会被编译器解析至基类，同时运行期类型信息也会把对象视为基类类型。因此在子类构造函数开始执行之前，它不会成为一个子类对象。
+
+此外，检查是否构造和析构期间调用了virtual函数也可能遇到麻烦，当有多个构造函数的时候。因此，避免代码重复的做法就是把重复的逻辑代码放到init函数中,这会造成更隐蔽的问题：
+
+```c++
+class Transaction{
+public:
+    Transaction(){
+        init();
+    }
+    virtual void log() const =0;
+    ...
+private:
+    void init(){
+        ...
+        log();
+    }
+}
+```
+
+本质上还是在构造函数中调用virtual函数，但是编译器和连接器是检查不出来的。当然这里的虚函数log是纯虚的，那么执行的时候执行到这里想调用基类的log的时候，就会终止程序；但是如果不是纯虚的，只是个虚函数，即基类有实现的时候，一切看起来都在正常运行。对于程序员来说就难以发现为什么错误地调用了基类的函数版本。
+
+一个解决方案是：
+
+把log改为non-virtual，并要求子类构造函数传递必要信息给基类的构造函数，然后基类的构造函数就可以安全的执行non virtual log。
+
+```c++
+#include <iostream>
+#include <string>
+
+// 基类
+class Base {
+public:
+    Base(const std::string& logInfo) {
+        log(logInfo);  // 在构造函数中执行非虚拟 log 函数
+    }
+
+    void log(const std::string& info) const {  // 非虚拟 log 函数
+        std::cout << info << std::endl;
+    }
+};
+
+// 子类
+class Derived : public Base {
+public:
+    Derived(const std::string& logInfo) : Base(logInfo) {  // 传递参数给基类的构造函数
+        // ... 其他初始化代码
+    }
+};
+
+int main() {
+    Derived d("Logging from Derived constructor");  // 输出: Logging from Derived constructor
+    return 0;
+}
+```
+
+关于上面这个写法：
+
+首先想记录一下关于virtual和多态：之所以要用virtual是因为涉及到多态的需求，而多态是涉及到指针和引用操作，即使用基类的指针调用函数的时候，如果不是virtual的，就会导致调用到了基类的版本。但假如类型是明确的，Dog* d = new Dog();而不是 Animal* d = new Dog(); 基类子类的函数版本调用并不存在问题，也就不需要virtual。所以这里不能理解错乱。因此上述这段代码，使用non-virtual当然就不支持多态场景了。
+
+使用了成员初始化列表。当然，构造函数的执行顺序还是先基类再子类，但是使用成员初始化列表可以让子类给基类的构造函数传递参数，而这种初始化行为是先于基类的构造函数执行的，也就是说基类构造执行前就已经拿到了这个初始化参数。这也正是成员初始化列表的意义：不像在构造函数内部进行赋值的做法，它先于构造函数体执行前就进行初始化。
+
+```c++
+#include <iostream>
+#include <string>
+
+class Base {
+public:
+    Base(const std::string& name) : name_(name) {
+        std::cout << "Base constructor called with name: " << name_ << std::endl;
+    }
+
+private:
+    std::string name_;
+};
+
+class Derived : public Base {
+public:
+    Derived(const std::string& name, int value) : Base(name), value_(value) {
+        std::cout << "Derived constructor called with value: " << value_ << std::endl;
+    }
+
+private:
+    int value_;
+};
+
+int main() {
+    Derived d("example", 42);  // 输出:
+                                // Base constructor called with name: example
+                                // Derived constructor called with value: 42
+    return 0;
+}
+```
+
+此外，对于其他的子类成员变量初始化，基类的构造器执行总是先于子类成员初始化。
+
+BTW，const成员和引用成员是不可以通过赋值来初始化的。
+
+```c++
+class Example {
+public:
+    Example(int a, const std::string& str) : value_(a), name_(str) {}
+private:
+    const int value_;  // const 数据成员
+    std::string& name_;  // 引用数据成员
+};
+```
+
+
+
+### 10： Have assignment operators returns a reference to *this
+
+令operator=返回一个给*this的引用
+
+
+
 
 
 ## 4 Designs and Declarations 设计与声明
@@ -1351,27 +1711,21 @@ Date(30,3,1995); // False
 
 struct Day
 {
-    explicit Day(int d) : val(d)
-    {
-    }
+    explicit Day(int d) : val(d) {}
 
     int val;
 };
 
 struct Month
 {
-    explicit Month(int m) : val(m)
-    {
-    }
+    explicit Month(int m) : val(m) {}
 
     int val;
 };
 
 struct Year
 {
-    explicit Year(int y) : val(y)
-    {
-    }
+    explicit Year(int y) : val(y) {}
 
     int val;
 };
@@ -1493,7 +1847,7 @@ std::tr1::shared_ptr<Investment> createInvestment(){
 
 - 需要配合某个继承图系吗inheritance graph。如是，则将受到既有class设计的束缚，特别是virtual和non-virtua的问题（Rule34&36）
 
-- 新type需要什么样的转换？是否允许T1类型被隐式转换为T2，则T1内部需要operator T2。如果只允许explicit构造函数存在，则得写出专门负责执行的函数，且不得为type conversion operators 或 non-explicit-one-argument构造函数。（见rule 15的隐式和显示转换示例）
+- 新type需要什么样的转换？是否允许T1类型被隐式转换为T2，则T1内部需要operator T2。如果只允许explicit构造函数存在，则得写出专门负责执行的转换函数，且不得提供type conversion operators || non-explicit-one-argument构造函数。（见rule 15的隐式和显示转换示例）
 
   ```c++
   // type conversion operators
@@ -1646,3 +2000,63 @@ int main() {
 
 
 但对于，内置类型、STL迭代器和函数对象，pass-by-value可以接受。
+
+
+
+### 24: Declare non-member functions when type conversions should apply to all parameters.
+
+若函数的所有参数都需要类型转换，为此采用non-member函数。
+
+考虑如下代码：
+
+```c++
+namespace myns{
+    class Rational{
+        public:
+            int enumerator() const{
+                return _enumerator;
+            }
+
+            int denominator() const{
+                return _denominator;
+            }
+
+            Rational(int enumerator=0, int denominator=1)
+                : _enumerator(enumerator), _denominator(denominator){}
+        	
+        	const Rational operator* (const Rational& rhs const;)
+
+        private:
+            int _enumerator;
+            int _denominator;
+    };
+
+    Rational operator*(const Rational& lhs, const Rational& rhs){
+        return Rational(lhs.enumerator()/lhs.denominator()*rhs.enumerator()/rhs.denominator());
+    }
+
+
+}
+
+int main(){
+    // 这个文件说明了几件事：
+    // 1) 编译器在类内找不到对应的运算符，就会去同一命名空间下找nonmember函数成功运行
+    // 2) 当类构造器参数有初值，多个参数都有，那么是支持隐式类型转换的。如果没给初值多参数那不行。
+    // 3) 理应将成员变量private
+    myns::Rational r1, r2;
+    r1 = 3;
+    r2 = 2;    
+    myns::Rational r3 = r1*r2;
+    myns::Rational r4 = 7*r3; // 编译器在operator*的传参过程中发生了隐式类型转换
+    
+    std::cout<<r3.enumerator()<<std::endl;
+    std::cout<<r4.enumerator()<<std::endl;
+    std::cout<<r3.denominator()<<std::endl;
+```
+
+`const Rational operator* (const Rational& rhs const;)`这个member函数对于两个Rational对象相乘OK，对于Rational对象与int相乘，也ok，因为编译器会在形参传参这里调用构造函数进行隐式类型转换（因为编译器发现构造器中需要一个int就可以构造Rational对象）。但是int*Rational是失败的。因为int本身没有class，也就没有相应的operator\*成员函数。
+
+编译器也会在命名空间或者global作用域内找 non-member的operator\*
+
+当然，如果构造函数是explicit的，那么不管是Rational\*2还是2\*Rationa都不行。
+

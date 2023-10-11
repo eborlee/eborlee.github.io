@@ -47,7 +47,7 @@ Let Data: $X=(X_1,X_2,X_3...,X_N)_{N*P}^T, X_i\in \mathbb{R}^P,~~X_i\stackrel{\t
 
 Under MLE we have, 
 
-$\theta_{MLE}=argmax_{\theta}P(X\|\theta),~\theta=(\mu, \sigma^2),\newline  ~ \log P(X\|\theta)\stackrel{i.i.d.}{=}\log \prod_{i=1}^{N}P(X_i\|\theta)=\sum_{i=1}^N \log P(X_i\|\theta)$
+$\theta_{MLE}=argmax_{\theta}P(X\|\theta),~\theta=(\mu, \sigma^2),  ~ \log P(X\|\theta)\stackrel{i.i.d.}{=}\log \prod_{i=1}^{N}P(X_i\|\theta)=\sum_{i=1}^N \log P(X_i\|\theta)$
 
 assume P=1, 
 $$
