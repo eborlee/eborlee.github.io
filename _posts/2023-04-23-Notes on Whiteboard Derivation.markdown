@@ -102,7 +102,7 @@ Kernel-SVM
 
 
 
-<img src="C:\Users\eborl\AppData\Roaming\Typora\typora-user-images\image-20231009010651648.png" alt="image-20231009010651648" style="zoom: 50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/prml/image-20231009010651648.png?raw=true" alt="image-20231009010651648" style="zoom: 50%;" />
 
 $f(w)=sign(w^Tx+b)$, 本质上是一个判别模型，跟概率没关系。
 
@@ -140,7 +140,7 @@ distance = $ \frac{1}{∥w∥}\|w^Tx_i+b\| $
 
 Let γ=1，他说是因为 超平面可以缩放，因此要固定下来w的模，对等式没有影响。 ？？？？
 
-<img src="C:\Users\eborl\AppData\Roaming\Typora\typora-user-images\image-20231009013048869.png" alt="image-20231009013048869" style="zoom:50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/prml/image-20231009013048869.png?raw=true" alt="image-20231009013048869" style="zoom:50%;" />
 
 => $\begin{cases}max_{w,b}~\frac{1}{\|w\|}=min∥w∥=min_{w,b}~\frac{1}{2}w^Tw\newline  s.t.~~min~y_i(w^Txi+b)=1, \forall i=1,...,N\end{cases}$
 
@@ -236,7 +236,7 @@ w\*已经由前面的过程得到。
 
 > 拉格朗日乘子 λi 表示第 i 个约束对目标函数的影响。如果  λi 为零，则意味着对应的样本点不是支持向量，不会影响决策边界。如果 λi 大于零，则意味着对应的样本点是支持向量，并有助于确定决策边界。
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\prml\image-20231010210256680.png" alt="image-20231010210256680" style="zoom:50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/prml/image-20231010210256680.png?raw=true" alt="image-20231010210256680" style="zoom:50%;" />
 
 假设$\exists~(x_k,y_k),~s.t.~1-y_k(w^Tx_k+b)=0$ 意味着这个样本是支持向量
 
@@ -286,7 +286,7 @@ $y_i(w^Tx_i+b)<0,loss=1-y_i(w^Tx_i+b)$
 
 $loss=max\{0,1-(y_i(w^Tx_i+b)\}=max\{0,1-z\}$
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\prml\image-20231010213750138.png" alt="image-20231010213750138" style="zoom:67%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/prml/image-20231010213750138.png?raw=true" alt="image-20231010213750138" style="zoom:67%;" />
 
 就是hinge loss
 
@@ -302,7 +302,7 @@ $min_{w,b}\frac{1}{2}w^Tw+C\sum^N_{i=1}max\{0,1-y_i(w^Tx_i+b)\}$
 
 $\begin{cases}min_{w,b}~\frac{1}{2}w^Tw+C\sum\xi_i\newline  s.t.y_i(w^Tx_i+b)\ge1-\xi_i, \xi_i\ge0\end{cases}$
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\prml\image-20231010214822831.png" alt="image-20231010214822831" style="zoom:50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/prml/image-20231010214822831.png?raw=true" alt="image-20231010214822831" style="zoom:50%;" />
 
 
 
