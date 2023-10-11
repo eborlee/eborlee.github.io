@@ -248,9 +248,9 @@ $w^Tx_k+b=y_k$
 
 <mark>$b^{*}=y_k-\sum\lambda_iy_ix_ix_k$</mark>
 
-超平面：$w^{*T}x+b^*$
+超平面：$w^{\*T}x+b^{\*}$
 
-决策函数：$f(x)=sign((w^{*})^T+b^*)$
+决策函数：$f(x)=sign((w^{\*})^T+b^\*)$
 
 由结论可见，w\*本质是data的线性组合。但是由于λ只有在支持向量上的样本不是0，所以这个线性组合中的大部分项都是0。
 
@@ -274,7 +274,7 @@ $min\frac{1}{2}w^Tw+Loss$
 
 Loss的选择：
 
-1）loss=$\sum^N_{i=1}I\{y_i(w^Tx_i+b)<1\}$
+1）loss=$\sum^N_{i=1}I[y_i(w^Tx_i+b)<1]$
 
 但问题指示函数不连续，存在跳跃。所以无法通过这种数错误数量的方法作为loss
 
@@ -284,7 +284,7 @@ Loss的选择：
 
 $y_i(w^Tx_i+b)<0,loss=1-y_i(w^Tx_i+b)$
 
-$loss=max\{0,1-(y_i(w^Tx_i+b)\}=max\{0,1-z\}$
+$loss=max[0,1-(y_i(w^Tx_i+b))]=max[0,1-z]$
 
 <img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/prml/image-20231010213750138.png?raw=true" alt="image-20231010213750138" style="zoom:67%;" />
 
