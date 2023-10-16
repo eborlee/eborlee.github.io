@@ -475,7 +475,7 @@ Label -1: (0,0) (1,1)
 
 $x =(x_1,x_2) \to Z=(x_1,x_2,(x_1-x_2)^2)$
 
-<img src="D:\OneDrive - The Chinese University of Hong Kong\Attachments\markdown imgs\prml\image-20231012160051674.png" alt="image-20231012160051674" style="zoom:50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/prml/image-20231012160051674.png?raw=true" alt="image-20231012160051674" style="zoom:50%;" />
 
 此时变成线性可分。
 
