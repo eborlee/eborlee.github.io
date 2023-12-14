@@ -474,7 +474,7 @@ Label -1: (0,0) (1,1)
 做一次转换，从Input space X -> Feature space Z
 
 $x =(x_1,x_2) \to Z=(x_1,x_2,(x_1-x_2)^2)$
-
+Di
 <img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/prml/image-20231012160051674.png?raw=true" alt="image-20231012160051674" style="zoom:50%;" />
 
 此时变成线性可分。
