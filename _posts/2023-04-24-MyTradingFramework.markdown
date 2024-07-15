@@ -1,8 +1,8 @@
 ---
 layout:     post
-title:      "My Trading Framework Development | 实盘框架设计"
-subtitle:   " \"Every little bit helps\""
-date:       2023-08-25 12:00:00
+title:      "EborQuant | My Trading Execution Framework"
+subtitle:   " \"Execution, Web and HFT\""
+date:       2024-08-25 12:00:00
 author:     "Yibo Li"
 header-img: "img/post-bg-2015.jpg"
 mathjax: true
@@ -13,22 +13,28 @@ tags:
     - Quant
 ---
 
-# Design Draft of My Real-Time Trading Framework
-
-2023-07-01
-
-Yibo Li
-
-yli12@stevens.edu; yiboli@link.cuhk.edu.hk
-
-http://eborlee.github.io
 
 ## Table Of Contents
 
 * TOC
 {:toc}
+### 1 Overview
 
-### 1 Observer Mode 观察者模式
+#### Web Url(under construction)
+
+<a href="https://eborlee.com">https://eborlee.com</a>
+
+#### Project Structure
+
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/%E5%AE%9E%E7%9B%98%E6%A1%86%E6%9E%B6/Project%20Structure.png?raw=true" alt="image-20231009010651648" style="zoom: 80%;" />
+
+
+#### Web Interface Diagram
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/%E5%AE%9E%E7%9B%98%E6%A1%86%E6%9E%B6/screencapture-mainpage.png?raw=true" alt="image-20231009010651648" style="zoom: 50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/%E5%AE%9E%E7%9B%98%E6%A1%86%E6%9E%B6/screencapture-list.png?raw=true" alt="image-20231009010651648" style="zoom: 50%;" />
+<img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/%E5%AE%9E%E7%9B%98%E6%A1%86%E6%9E%B6/screencapture-strategy-detail.png?raw=true" alt="image-20231009010651648" style="zoom: 50%;" />
+
+### 2 Observer Mode 观察者模式
 目的：创建实例时完成观察关系注册绑定，从而在某些事件逻辑触发后，自动完成观察者和被观察者之间的通知和响应，而无需手动显式触发。比如策略完成下单后，TradingEngine可以自动通知Logger, DatabaseManager和Notifier模块完成相应功能，如日志记录、数据库更新和消息推送，而无需子策略开发者显式地费事地编写下单成功后的通知代码。
 
 观察者Observer: 数据库观察者 / 日志观察者 
@@ -45,13 +51,13 @@ TradeEngine类实现Subject类，实现以上方法，下单函数order在完成
 <img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/%E5%AE%9E%E7%9B%98%E6%A1%86%E6%9E%B6/ER%20(2).png?raw=true" alt="image-ER" style="zoom:100%;" />
 
 
-### 2 多进程通信的对象传递问题
+### 3 多进程通信的对象传递问题
 
 主进程的某些实例对象无法简单地通过传递给子进程，即使通过进程间通信Queue也不可以。主要原因是无法序列化pickle，比如数据库连接池对象等。
 
 
 
-### 3 异步下任务打断的问题
+### 4 异步下任务打断的问题
 
 背景：获取数据、下单等网络IO都基于异步方式，作为协程调用。同时，希望能够支持，telegram端随时可以给策略管理器及子策略发送指令。这个指令应能够被实时响应，如策略正在运行next协程，以处理策略核心部分，即获取数据、计算信号、报撤单等，这个过程应该能够被打断。又比如，本次循环next核心部分已经运行完毕，策略是基于15min Kline的，处于休眠等待下一次kline更新也应该能够被实时打断。
 
