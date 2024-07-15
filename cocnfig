@@ -1,0 +1,5 @@
+Host aliyun
+	HostName 8.209.204.201
+	User root
+	Port 22
+	IdentityFile /Users/admin/Documents/ForCpp.pem
