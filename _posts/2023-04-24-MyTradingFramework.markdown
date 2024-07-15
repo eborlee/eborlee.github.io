@@ -27,7 +27,25 @@ tags:
 #### Project Structure
 
 <img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/%E5%AE%9E%E7%9B%98%E6%A1%86%E6%9E%B6/Project%20Structure.png?raw=true" alt="image-20231009010651648" style="zoom: 80%;" />
+<br>
+This project is a multi-module, multi-strategy management-focused quantitative execution framework inspired by `Backtrader`. It supports multiple time granularities, multiple asset types, and various strategies, though it is not designed for high-frequency trading.
 
+The framework comprises five main modules and three microservices to handle unified market data subscription and distribution, multi-strategy spawning, and centralized persistence management. The five main modules are:
+<ul>
+<li>Strategy Manager</li>
+<li>Data Center</li>
+<li>Database Manager</li>
+<li>Order Center</li>
+<li>Health Monitoring</li>
+</ul>
+
+The microservices include `RabbitMQ` for inter-module communication, `Redis` for market data distribution, and `ClickHouse` for time-series database management.
+
+The system is deployed on `Alibaba Cloud's CentOS` service, orchestrated using `Docker-compose`.
+
+It features custom-built classes for the `engine`, `strategy base`, `lines`, and `indicators` to facilitate strategy expansion, minimizing redundant work for strategy developers. This allows them to focus solely on calculating strategy signals without worrying about data initialization, maintenance, or updates.
+
+Additionally, a web application built with `Java SpringBoot` is provided for performance display and convenient strategy control. This includes easy strategy start/stop control, adding and disabling trading instruments, parameter modification, and more.
 
 #### Web Interface Diagram
 <img src="https://github.com/eborlee/eborlee.github.io/blob/main/img/%E5%AE%9E%E7%9B%98%E6%A1%86%E6%9E%B6/screencapture-mainpage.png?raw=true" alt="image-20231009010651648" style="zoom: 50%;" />
